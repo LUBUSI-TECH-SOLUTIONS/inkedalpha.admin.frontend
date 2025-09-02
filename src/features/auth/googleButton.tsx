@@ -17,7 +17,7 @@ export const GoogleButton = () => {
 
   return (
     <Button onClick={handleGoogleSignIn} variant="outline">
-      Continuar con Google
+      Iniciar sesión
     </Button>
   )
 }
