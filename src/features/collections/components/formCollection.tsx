@@ -38,17 +38,14 @@ const formSchema = z.object({
 
 type CollectionFormValues = z.infer<typeof formSchema>;
 
-interface FormColectionProps {
-  initialData?: CollectionType;
-}
+export const FormColection = () => {
 
-export const FormColection = ({
-  initialData
-}: FormColectionProps) => {
-  const title = initialData ? "Editar Colección" : "Crear Colección";
-  const description = initialData ? "Edita la colección" : "Crea una nueva colección";
-  const toastMessage = initialData ? "Colección actualizada." : "Colección creada.";
-  const action = initialData ? "Guardar cambios" : "Crear colección";
+  const {selectedCollection} = useCollection();
+
+  const title = selectedCollection ? "Editar Colección" : "Crear Colección";
+  const description = selectedCollection ? "Edita la colección" : "Crea una nueva colección";
+  const toastMessage = selectedCollection ? "Colección actualizada." : "Colección creada.";
+  const action = selectedCollection ? "Guardar cambios" : "Crear colección";
 
   const [preview, setPreview] = useState<string | null>(null);
   const {
@@ -57,13 +54,13 @@ export const FormColection = ({
 
   const form = useForm<CollectionFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData
+    defaultValues: selectedCollection
       ? {
-        collection_name: initialData.collection_name || "",
-        collection_description: initialData.collection_description || "",
-        collection_image: initialData.collection_image || "",
-        start_date: initialData.start_date ? new Date(initialData.start_date) : undefined,
-        end_date: initialData.end_date ? new Date(initialData.end_date) : undefined,
+        collection_name: selectedCollection.collection_name || "",
+        collection_description: selectedCollection.collection_description || "",
+        collection_image: selectedCollection.collection_image || "",
+        start_date: selectedCollection.start_date ? new Date(selectedCollection.start_date) : undefined,
+        end_date: selectedCollection.end_date ? new Date(selectedCollection.end_date) : undefined,
       }
       : {
         collection_name: "",
@@ -95,7 +92,7 @@ export const FormColection = ({
           title={title}
           description={description}
         />
-        {initialData && (
+        {selectedCollection && (
           <Button
             variant="destructive"
             size="sm">
@@ -243,13 +240,17 @@ export const FormColection = ({
 
             </div>
             <div className="flex flex-col items-center gap-4 border p-4 rounded-lg shadow-sm">
-              {preview && (
+              {preview || selectedCollection?.collection_image && (
                 <>
                   <h2 className="font-medium text-lg">
                     Vista previa
                   </h2>
                   <img
-                    src={preview}
+                    src={
+                      selectedCollection?.collection_image
+                        ? selectedCollection.collection_image
+                        : preview ?? undefined
+                    }
                     alt="Vista previa"
                     className="w-96 h-64 object-cover rounded-lg shadow-lg"
                   />

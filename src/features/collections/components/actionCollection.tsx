@@ -1,8 +1,27 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import type { Row } from "@tanstack/react-table"
 import { Edit, MoreHorizontal, Trash } from "lucide-react"
+import type { CollectionType } from "../types/collectionType"
+import { useCollection } from "../store/useCollection"
+import { useNavigate } from "react-router-dom"
 
-export const CellActionCollection = () => {
+interface CellActionCollectionProps {
+  row: Row<CollectionType>;
+}
+
+export const CellActionCollection = ({
+  row
+}: CellActionCollectionProps) => {
+
+  const {selectCollection} = useCollection()
+  const navigate = useNavigate();
+
+  const handleUpdate = () => {
+    if(!row.original) return;
+    selectCollection(row.original)
+    navigate(`/collections/${row.original.collection_id}`);
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -15,7 +34,7 @@ export const CellActionCollection = () => {
         <DropdownMenuLabel>
           Acciones
         </DropdownMenuLabel>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleUpdate}>
           <Edit className="mr-2 h-4 w-4"/>
           Actualizar
         </DropdownMenuItem>

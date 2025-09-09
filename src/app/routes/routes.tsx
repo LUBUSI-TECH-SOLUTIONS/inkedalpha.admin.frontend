@@ -39,6 +39,10 @@ const routes = createBrowserRouter([
             element: <NewColection/>,
           },
           {
+            path: "/collections/:id",
+            element: <NewColection/>,
+          },
+          {
             path: "/colors",
             element: <ColorsPage/>,
           },

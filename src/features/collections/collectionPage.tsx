@@ -8,7 +8,7 @@ import { CollectionTable } from "./components/tableCollection"
 
 export const CollectionPage = () => {
   const navigate = useNavigate();
-  const {fetchCollections} = useCollection()
+  const {fetchCollections, collections} = useCollection()
 
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export const CollectionPage = () => {
     <>
       <div className="flex items-center justify-between mb-4">
         <Heading
-          title="Colecciones (0)"
+          title={`Colecciones ${collections ? `(${collections.length})` : '(0)'}`}
           description="Gestiona tus colecciones"
         />
         <Button onClick={goToCollections}>

@@ -51,7 +51,7 @@ export const getColumnsCollection = (): ColumnDef<CollectionType>[] => {
     },
     {
       id: "actions",
-      cell: () => <CellActionCollection />,
+      cell: ({row}) => <CellActionCollection row={row}/>,
     }
   ]
 }
