@@ -13,7 +13,7 @@ import { Avatar, AvatarImage } from "./ui/avatar"
 import { AvatarFallback } from "@radix-ui/react-avatar"
 import { LogOut } from "lucide-react"
 
-export const UserButton = () => {
+export const  UserButton = () => {
   const { user } = useSession()
 
   const logout = async () => {

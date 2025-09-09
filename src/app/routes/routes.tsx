@@ -6,6 +6,8 @@ import Dashboard from "@/features/dashboard/dashboardPage";
 import { Mainlayout } from "@/app/mainLayout/mainLayout";
 import { CollectionPage } from "@/features/collections/collectionPage";
 import { NewColection } from "@/features/collections/components/newCollection";
+import { ColorsPage } from "@/features/colors/colorsPage";
+import { NewColor } from "@/features/colors/components/newColor";
 
 const routes = createBrowserRouter([
   {
@@ -33,6 +35,14 @@ const routes = createBrowserRouter([
           {
             path: "/collections/new",
             element: <NewColection/>,
+          },
+          {
+            path: "/colors",
+            element: <ColorsPage/>,
+          },
+          {
+            path: "/colors/new",
+            element: <NewColor/>,
           }
         ]
       }

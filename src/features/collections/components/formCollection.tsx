@@ -13,6 +13,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { format } from "date-fns"
 import { Calendar } from "@/components/ui/calendar";
+import { useState } from "react";
+import { useCollection } from "../store/useCollection";
 
 const formSchema = z.object({
   collection_name:
@@ -48,6 +50,11 @@ export const FormColection = ({
   const toastMessage = initialData ? "Colección actualizada." : "Colección creada.";
   const action = initialData ? "Guardar cambios" : "Crear colección";
 
+  const [preview, setPreview] = useState<string | null>(null);
+  const {
+    createCollection,
+  } = useCollection();
+
   const form = useForm<CollectionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData
@@ -67,9 +74,18 @@ export const FormColection = ({
       }
   })
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    const file = files && files[0]; // obtiene el primer archivo si existe
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setPreview(imageUrl); // guardamos la url temporal en el estado
+    }
+  };
+
   const onSubmit = (data: CollectionFormValues) => {
-    console.log(data);
     toast.success(toastMessage);
+    createCollection(data as CollectionType);
   }
 
   return (
@@ -94,134 +110,175 @@ export const FormColection = ({
           className="space-y-8 w-full pt-3"
         >
           <div className="md:grid md:grid-cols-2 gap-8">
-            <FormField
-              control={form.control}
-              name="collection_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Titulo</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={false}
-                      placeholder="Nombre de la colección"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Nombre de la colección.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="collection_description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descripción</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={false}
-                      placeholder="Descripción de la colección"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Breve descripción de la colección.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="start_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Inicio Colección</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn("w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}>
-                          {
-                            field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Selecciona la fecha</span>
-                            )
-                          }
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date() // Deshabilitar fechas pasadas
-                        }
-                        captionLayout="dropdown"
+            <div className="md:grid md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="collection_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Titulo</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={false}
+                        placeholder="Nombre de la colección"
+                        {...field}
                       />
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription>
-                    Fecha en la cual se dara inicio a la colección.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="end_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Fin Colección</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn("w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}>
-                          {
-                            field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Selecciona la fecha</span>
-                            )
-                          }
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date() // Deshabilitar fechas pasadas
-                        }
-                        captionLayout="dropdown"
+                    </FormControl>
+                    <FormDescription>
+                      Nombre de la colección.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="collection_description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descripción</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={false}
+                        placeholder="Descripción de la colección"
+                        {...field}
                       />
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription>
-                    Fecha en la cual se finaliza la colección.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
+                    </FormControl>
+                    <FormDescription>
+                      Breve descripción de la colección.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="start_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Inicio Colección</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn("w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}>
+                            {
+                              field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Selecciona la fecha</span>
+                              )
+                            }
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date < new Date() // Deshabilitar fechas pasadas
+                          }
+                          captionLayout="dropdown"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>
+                      Fecha en la cual se dara inicio a la colección.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="end_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Fin Colección</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn("w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}>
+                            {
+                              field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Selecciona la fecha</span>
+                              )
+                            }
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date < new Date() // Deshabilitar fechas pasadas
+                          }
+                          captionLayout="dropdown"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>
+                      Fecha en la cual se finaliza la colección.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+            </div>
+            <div className="flex flex-col items-center gap-4 border p-4 rounded-lg shadow-sm">
+              {preview && (
+                <>
+                  <h2 className="font-medium text-lg">
+                    Vista previa
+                  </h2>
+                  <img
+                    src={preview}
+                    alt="Vista previa"
+                    className="w-96 h-64 object-cover rounded-lg shadow-lg"
+                  />
+                </>
               )}
-            />
+              <FormField
+                control={form.control}
+                name="collection_image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Imagen</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        placeholder="Imagen de la colección"
+                        onChange={(e) => {
+                          handleFileChange(e);
+                          field.onChange(e);
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Imagen representativa de la colección.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           <Button type="submit">{action}</Button>
         </form>
