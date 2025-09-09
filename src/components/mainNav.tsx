@@ -23,6 +23,11 @@ export const MainNav = ({
       href: "/colors",
       label: "Colores",
       active: location.pathname === "/colors"
+    },
+    {
+      href: "/sizes",
+      label: "Tallas",
+      active: location.pathname === "/sizes"
     }
   ]
   return (

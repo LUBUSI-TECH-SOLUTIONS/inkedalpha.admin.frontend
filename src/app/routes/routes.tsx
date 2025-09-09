@@ -8,6 +8,8 @@ import { CollectionPage } from "@/features/collections/collectionPage";
 import { NewColection } from "@/features/collections/components/newCollection";
 import { ColorsPage } from "@/features/colors/colorsPage";
 import { NewColor } from "@/features/colors/components/newColor";
+import { SizePage } from "@/features/size/sizePage";
+import { NewSize } from "@/features/size/components/newSize";
 
 const routes = createBrowserRouter([
   {
@@ -43,6 +45,14 @@ const routes = createBrowserRouter([
           {
             path: "/colors/new",
             element: <NewColor/>,
+          },
+          {
+            path: "/sizes",
+            element: <SizePage/>,
+          },
+          {
+            path: "/sizes/new",
+            element: <NewSize/>,
           }
         ]
       }

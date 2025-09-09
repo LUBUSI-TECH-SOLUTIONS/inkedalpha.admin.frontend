@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
-interface NewColorProps {
+interface ColorProps {
   initialData?: ColorType | null;
 }
 
@@ -28,7 +28,7 @@ type ColorFormValues = z.infer<typeof formSchema>
 
 export const FormColor = ({
   initialData
-}: NewColorProps) => {
+}: ColorProps) => {
   const title = initialData ? 'Edit color' : 'Create color';
   const description = initialData ? 'Edit a color.' : 'Add a new color';
   const toastMessage = initialData ? 'Color updated.' : 'Color created.';
