@@ -51,8 +51,8 @@ class ApiClient {
       baseURL,
       timeout: 90000,
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
+      "Content-Type": "",
+      Accept: "application/json"
       },
     });
 

@@ -25,8 +25,8 @@ const formSchema = z.object({
     z.string()
       .min(2, { message: "Collection description must be at least 2 characters." })
       .max(200, { message: "Collection description must be at most 200 characters." }),
-  collection_image:
-    z.string()
+  image:
+    z.file()
       .optional(),
   start_date:
     z.date()
@@ -40,7 +40,7 @@ type CollectionFormValues = z.infer<typeof formSchema>;
 
 export const FormColection = () => {
 
-  const {selectedCollection} = useCollection();
+  const { selectedCollection } = useCollection();
 
   const title = selectedCollection ? "Editar Colección" : "Crear Colección";
   const description = selectedCollection ? "Edita la colección" : "Crea una nueva colección";
@@ -58,14 +58,14 @@ export const FormColection = () => {
       ? {
         collection_name: selectedCollection.collection_name || "",
         collection_description: selectedCollection.collection_description || "",
-        collection_image: selectedCollection.collection_image || "",
+        // collection_image: typeof selectedCollection.collection_image === "string" ? selectedCollection.collection_image : "",
         start_date: selectedCollection.start_date ? new Date(selectedCollection.start_date) : undefined,
         end_date: selectedCollection.end_date ? new Date(selectedCollection.end_date) : undefined,
       }
       : {
         collection_name: "",
         collection_description: "",
-        collection_image: "",
+        image: undefined,
         start_date: undefined,
         end_date: undefined,
       }
@@ -82,7 +82,12 @@ export const FormColection = () => {
 
   const onSubmit = (data: CollectionFormValues) => {
     toast.success(toastMessage);
-    createCollection(data as CollectionType);
+    const finalData = {
+      ...data,
+      start_date: data.start_date ? data.start_date.toISOString().split('T')[0] : undefined,
+      end_date: data.end_date ? data.end_date.toISOString().split('T')[0] : undefined,
+    }
+    createCollection(finalData as unknown as CollectionType);
   }
 
   return (
@@ -240,15 +245,15 @@ export const FormColection = () => {
 
             </div>
             <div className="flex flex-col items-center gap-4 border p-4 rounded-lg shadow-sm">
-              {preview || selectedCollection?.collection_image && (
+              {preview || selectedCollection?.image && (
                 <>
                   <h2 className="font-medium text-lg">
                     Vista previa
                   </h2>
                   <img
                     src={
-                      selectedCollection?.collection_image
-                        ? selectedCollection.collection_image
+                      typeof selectedCollection?.image === "string"
+                        ? selectedCollection.image
                         : preview ?? undefined
                     }
                     alt="Vista previa"
@@ -258,17 +263,19 @@ export const FormColection = () => {
               )}
               <FormField
                 control={form.control}
-                name="collection_image"
+                name="image"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Imagen</FormLabel>
                     <FormControl>
                       <Input
                         type="file"
-                        placeholder="Imagen de la colección"
+                        accept="image/*"
                         onChange={(e) => {
-                          handleFileChange(e);
-                          field.onChange(e);
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            field.onChange(file); // Guardamos el objeto File en el form
+                          }
                         }}
                       />
                     </FormControl>
@@ -279,6 +286,7 @@ export const FormColection = () => {
                   </FormItem>
                 )}
               />
+
             </div>
           </div>
           <Button type="submit">{action}</Button>

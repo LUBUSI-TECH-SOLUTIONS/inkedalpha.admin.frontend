@@ -1,5 +1,5 @@
 import apiClient from "@/app/apiClient";
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 import type { AxiosResponse } from "axios";
 import type { CollectionType } from "@/features/collections/types/collectionType";
 import { toast } from "sonner";
@@ -27,8 +27,8 @@ export const CollectionService = {
     Promise<AxiosResponse<CollectionType>> => {
     try {
       const formData = new FormData();
-      if (collectionData.collection_image) {
-        formData.append('collection_image', collectionData.collection_image);
+      if (collectionData.image) {
+        formData.append('image', collectionData.image);
       }
       if (collectionData.collection_name) {
         formData.append('collection_name', collectionData.collection_name);
@@ -44,14 +44,18 @@ export const CollectionService = {
       }
 
       const response: AxiosResponse<CollectionType>
-        = await apiClient.post<CollectionType>('v1/create-collection', formData);
+        = await apiClient.post<CollectionType>('v1/create-collection', formData, {
+          headers: AxiosHeaders.from({
+            "Content-Type": "multipart/form-data"
+          })
+        });
       toast.success("Colección creada exitosamente.");
       return response;
     } catch (error: unknown) {
       let errorMessage = "Error al crear la colección.";
       if (axios.isAxiosError(error)) {
         errorMessage = error.response?.data?.message || errorMessage;
-      }
+      } 
       else if (error instanceof Error) {
         errorMessage = error.message;
       }
