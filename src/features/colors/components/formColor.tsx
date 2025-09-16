@@ -1,20 +1,16 @@
-import type { ColorType } from "../types/colorType";
 import z from "zod";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-
-interface ColorProps {
-  initialData?: ColorType | null;
-}
+import { useColorStore } from "../store/colorStore";
 
 const formSchema = z.object({
-  colour_name: z.string().min(1, {
+  color_name: z.string().min(1, {
     message: "El nombre del color es obligatorio"
   }).max(100, {
     message: "El nombre del color debe tener máximo 100 caracteres"
@@ -26,44 +22,58 @@ const formSchema = z.object({
 
 type ColorFormValues = z.infer<typeof formSchema>
 
-export const FormColor = ({
-  initialData
-}: ColorProps) => {
-  const title = initialData ? 'Edit color' : 'Create color';
-  const description = initialData ? 'Edit a color.' : 'Add a new color';
-  const toastMessage = initialData ? 'Color updated.' : 'Color created.';
-  const action = initialData ? 'Save changes' : 'Create';
+export const FormColor = () => {
+  const { selectedColor, updateColor, createColor, isLoading } = useColorStore();
+
+  const title = selectedColor ? 'Edit color' : 'Create color';
+  const description = selectedColor ? 'Edit a color.' : 'Add a new color';
+  const action = selectedColor ? 'Save changes' : 'Create';
 
   const onSubmit = (data: ColorFormValues) => {
-    console.log(data);
-    toast.success(toastMessage);
+    try {
+      if (selectedColor) {
+        updateColor({
+          color_id: selectedColor.color_id,
+          ...data
+        });
+      } else {
+        createColor(data);
+      }
+    } catch (error) {
+      toast.error('Something went wrong, please try again.');
+      console.log(error);
+      return;
+    }
   }
 
   const form = useForm<ColorFormValues>({
-    defaultValues: initialData || {
-      colour_name: '',
+    defaultValues: selectedColor || {
+      color_name: '',
       hexadecimal: '#'
     }
   })
 
   return (
     <>
-      <Heading
-        title={title}
-        description={description}
-      />
-      {
-        initialData && (
-          <Button
-            disabled={false}
-            variant="destructive"
-            size="sm"
-            onClick={() => console.log("delete")}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )
-      }
+      <div className="flex items-center justify-between">
+
+        <Heading
+          title={title}
+          description={description}
+        />
+        {
+          selectedColor && (
+            <Button
+              disabled={false}
+              variant="destructive"
+              size="sm"
+              onClick={() => console.log("delete")}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          )
+        }
+      </div>
       <Separator className="my-4" />
       <Form {...form}>
         <form
@@ -73,12 +83,16 @@ export const FormColor = ({
           <div className="md:grid md:grid-cols-3 md:gap-8">
             <FormField
               control={form.control}
-              name="colour_name"
+              name="color_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nombre del color" {...field} />
+                    <Input
+                      disabled={isLoading}
+                      placeholder="Nombre del color"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -94,11 +108,12 @@ export const FormColor = ({
                     <div className="flex items-center gap-x-4">
                       <Input
                         id="color"
+                        disabled={isLoading}
                         {...field}
                         value={field.value}
                         onChange={field.onChange}
                         type="color"
-                        className="hidden"
+                        className=""
                       />
                       <label
                         htmlFor="color"
@@ -112,7 +127,10 @@ export const FormColor = ({
               )}
             />
           </div>
-          <Button type="submit">{action}</Button>
+          <Button disabled={isLoading} type="submit">
+            <Loader2 className={`mr-2 h-4 w-4 animate-spin ${isLoading ? 'inline-block' : 'hidden'}`} />
+            {action}
+          </Button>
         </form>
       </Form>
     </>

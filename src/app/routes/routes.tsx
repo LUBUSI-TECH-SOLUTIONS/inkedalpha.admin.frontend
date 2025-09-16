@@ -51,6 +51,10 @@ const routes = createBrowserRouter([
             element: <NewColor/>,
           },
           {
+            path: "/colors/:id",
+            element: <NewColor/>,
+          },
+          {
             path: "/sizes",
             element: <SizePage/>,
           },

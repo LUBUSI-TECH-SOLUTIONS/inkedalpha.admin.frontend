@@ -2,9 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useColorStore } from "./store/colorStore";
+import { useEffect } from "react";
+import { ColorTable } from "./components/tableColor";
 
 export const ColorsPage = () => {
   const navigate = useNavigate();
+  const {fetchColors, colors}= useColorStore();
+
+  useEffect(() => {
+    fetchColors();
+  }, [fetchColors]);
 
   const goToColors = () => {
     navigate("/colors/new");
@@ -14,7 +22,7 @@ export const ColorsPage = () => {
     <>
       <div className="flex items-center justify-between mb-4">
         <Heading
-          title="Colores (0)"
+          title={`Colores ${colors ? `(${colors.length})` : '(0)'}`}
           description="Gestiona tus colores"
         />
         <Button onClick={goToColors}>
@@ -22,10 +30,7 @@ export const ColorsPage = () => {
           Agregar Color
         </Button>
       </div>
-      <div>
-        {/* Aquí puedes agregar la tabla o lista de colores */}
-        <p>Aquí se mostrarán los colores.</p>
-      </div>
+      <ColorTable/>
     </>
   )
 }

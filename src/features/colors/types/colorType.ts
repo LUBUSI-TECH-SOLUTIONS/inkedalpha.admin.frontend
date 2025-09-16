@@ -1,5 +1,5 @@
 export interface ColorType {
-  colour_id?: string;
-  colour_name?: string;
+  color_id?: string;
+  color_name?: string;
   hexadecimal?: string;
 }

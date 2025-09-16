@@ -276,6 +276,7 @@ export const FormColection = () => {
                           if (file) {
                             field.onChange(file); // Guardamos el objeto File en el form
                           }
+                          handleFileChange(e); // Actualizamos la vista previa
                         }}
                       />
                     </FormControl>

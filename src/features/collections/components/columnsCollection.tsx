@@ -16,18 +16,27 @@ export const getColumnsCollection = (): ColumnDef<CollectionType>[] => {
     },
     {
       id: "collection_image",
-      accessorFn: (row) => row.collection_image,
+      accessorFn: (row) => row.image,
       header: "Imagen",
-      cell: ({ row }) =>
-        row.original.collection_image ? (
+      cell: ({ row }) => {
+        const image = row.original.image;
+        let src: string | undefined;
+        if (typeof image === "string") {
+          src = image;
+        } else if (image instanceof File) {
+          src = URL.createObjectURL(image);
+        }
+        return image ? (
           <img
-            src={row.original.collection_image}
+            src={src}
             alt={row.original.collection_name}
             className="h-10 w-10 rounded-md object-cover"
+            loading="lazy"
           />
         ) : (
           <div className="h-10 w-10 rounded-md bg-muted" />
-        )
+        );
+      }
     },
     {
       id: "start_date",
