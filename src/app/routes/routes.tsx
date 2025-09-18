@@ -10,6 +10,8 @@ import { ColorsPage } from "@/features/colors/colorsPage";
 import { NewColor } from "@/features/colors/components/newColor";
 import { SizePage } from "@/features/size/sizePage";
 import { NewSize } from "@/features/size/components/newSize";
+import { CategoryPage } from "@/features/category/categoryPage";
+import { NewCategory } from "@/features/category/components/newCategory";
 
 const routes = createBrowserRouter([
   {
@@ -41,6 +43,18 @@ const routes = createBrowserRouter([
           {
             path: "/collections/:id",
             element: <NewColection/>,
+          },
+          {
+            path: "/categories",
+            element: <CategoryPage/>,
+          },
+          {
+            path: "/categories/new",
+            element: <NewCategory/>,
+          },
+          {
+            path: "/categories/:id",
+            element: <NewCategory/>,
           },
           {
             path: "/colors",

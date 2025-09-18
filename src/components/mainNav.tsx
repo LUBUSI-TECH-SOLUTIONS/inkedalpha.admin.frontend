@@ -20,6 +20,11 @@ export const MainNav = ({
       active: location.pathname === "/collections"
     },
     {
+      href: "/categories",
+      label: "Categorias",
+      active: location.pathname === "/categories"
+    },
+    {
       href: "/colors",
       label: "Colores",
       active: location.pathname === "/colors"
