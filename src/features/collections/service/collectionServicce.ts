@@ -55,7 +55,7 @@ export const CollectionService = {
       let errorMessage = "Error al crear la colección.";
       if (axios.isAxiosError(error)) {
         errorMessage = error.response?.data?.message || errorMessage;
-      } 
+      }
       else if (error instanceof Error) {
         errorMessage = error.message;
       }
@@ -63,4 +63,65 @@ export const CollectionService = {
       throw new Error(errorMessage);
     }
   },
+
+  updateCollection: async (collectionId: string, collectionData: CollectionType):
+    Promise<AxiosResponse<CollectionType>> => {
+    try {
+      const response: AxiosResponse<CollectionType>
+        = await apiClient.patch<CollectionType>(`v1/update-collection/${collectionId}`, collectionData);
+      toast.success("Colección actualizada exitosamente.");
+      return response;
+    } catch (error: unknown) {
+      let errorMessage = "Error al actualizar la colección.";
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+
+    }
+  },
+
+  deleteCollection: async (collectionId: string):
+    Promise<AxiosResponse<{ message: string }>> => {
+    try {
+      const response: AxiosResponse<{ message: string }>
+        = await apiClient.delete<{ message: string }>(`v1/delete-collection/${collectionId}`);
+      toast.success("Colección eliminada exitosamente.");
+      return response;
+    } catch (error: unknown) {
+      let errorMessage = "Error al eliminar la colección.";
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+  },
+
+  toggleCollection: async (collectionId: string):
+    Promise<AxiosResponse<CollectionType>> => {
+    try {
+      const response: AxiosResponse<CollectionType>
+        = await apiClient.patch<CollectionType>(`v1/toggle-collection/${collectionId}`);
+      toast.success("Estado de la colección actualizado exitosamente.");
+      return response;
+    } catch (error: unknown) {
+      let errorMessage = "Error al actualizar el estado de la colección.";
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+  }
 }

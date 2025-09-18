@@ -10,7 +10,7 @@ export const getColumnsCollection = (): ColumnDef<CollectionType>[] => {
       accessorFn: (row) => row.collection_name,
       header: "Nombre",
       cell: ({ row }) =>
-        <div className="text-left max-w-[100px] truncate">
+        <div className="text-left max-w-[100px]">
           {row.original.collection_name}
         </div>
     },
@@ -18,25 +18,12 @@ export const getColumnsCollection = (): ColumnDef<CollectionType>[] => {
       id: "collection_image",
       accessorFn: (row) => row.image,
       header: "Imagen",
-      cell: ({ row }) => {
-        const image = row.original.image;
-        let src: string | undefined;
-        if (typeof image === "string") {
-          src = image;
-        } else if (image instanceof File) {
-          src = URL.createObjectURL(image);
-        }
-        return image ? (
-          <img
-            src={src}
-            alt={row.original.collection_name}
-            className="h-10 w-10 rounded-md object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div className="h-10 w-10 rounded-md bg-muted" />
-        );
-      }
+      cell: ({ row }) => <img
+        src={row.original.collection_image}
+        alt={row.original.collection_name}
+        className="w-10 h-10 object-cover rounded"
+      />
+
     },
     {
       id: "start_date",
@@ -60,7 +47,7 @@ export const getColumnsCollection = (): ColumnDef<CollectionType>[] => {
     },
     {
       id: "actions",
-      cell: ({row}) => <CellActionCollection row={row}/>,
+      cell: ({ row }) => <CellActionCollection row={row} />,
     }
   ]
 }

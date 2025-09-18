@@ -20,7 +20,7 @@ export const getColumnsColor = (): ColumnDef<ColorType>[] => {
       cell: ({ row }) =>
         <div className="flex items-center">
           <div
-            className="h-6 w-6 rounded-md border mr-2"
+            className="h-6 w-6 rounded-full  mr-2"
             style={{ backgroundColor: row.original.hexadecimal }}
           />
           {row.original.hexadecimal?.toUpperCase()}

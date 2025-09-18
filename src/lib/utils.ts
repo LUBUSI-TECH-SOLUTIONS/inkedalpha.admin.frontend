@@ -41,3 +41,5 @@ export const formaterDate = (inputDate?: string | Date): string => {
 
   return `${day} ${month} ${year}`;
 };
+
+export const formatDate = (date?: Date) => date ? date.toISOString().split('T')[0] : undefined;

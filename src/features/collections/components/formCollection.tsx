@@ -4,13 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, Trash } from "lucide-react";
+import { CalendarIcon, Loader2, Trash } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { format } from "date-fns"
 import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
@@ -40,7 +40,12 @@ type CollectionFormValues = z.infer<typeof formSchema>;
 
 export const FormColection = () => {
 
-  const { selectedCollection } = useCollection();
+  const {
+    selectedCollection,
+    updateCollection,
+    createCollection,
+    isLoading
+  } = useCollection();
 
   const title = selectedCollection ? "Editar Colección" : "Crear Colección";
   const description = selectedCollection ? "Edita la colección" : "Crea una nueva colección";
@@ -48,10 +53,6 @@ export const FormColection = () => {
   const action = selectedCollection ? "Guardar cambios" : "Crear colección";
 
   const [preview, setPreview] = useState<string | null>(null);
-  const {
-    createCollection,
-  } = useCollection();
-
   const form = useForm<CollectionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: selectedCollection
@@ -81,13 +82,38 @@ export const FormColection = () => {
   };
 
   const onSubmit = (data: CollectionFormValues) => {
-    toast.success(toastMessage);
-    const finalData = {
-      ...data,
-      start_date: data.start_date ? data.start_date.toISOString().split('T')[0] : undefined,
-      end_date: data.end_date ? data.end_date.toISOString().split('T')[0] : undefined,
+    const { collection_name, collection_description, image, start_date, end_date } = data;
+
+    const collectionData: CollectionType = {
+      collection_name,
+      collection_description,
+      image: image || null,
+      start_date: formatDate(start_date),
+      end_date: formatDate(end_date),
+    };
+    if (selectedCollection) {
+      // Actualizar colección existente
+      updateCollection({
+        ...collectionData,
+        collection_id: selectedCollection.collection_id
+      }).then(() => {
+        toast.success(toastMessage);
+      }).catch(() => {
+        toast.error("Error al actualizar la colección.");
+      });
     }
-    createCollection(finalData as unknown as CollectionType);
+    else {
+      // Crear nueva colección
+      createCollection(collectionData).then(() => {
+        toast.success(toastMessage);
+        form.reset(); // Reiniciar el formulario después de crear
+        setPreview(null); // Limpiar la vista previa
+      }).catch(() => {
+        toast.error("Error al crear la colección.");
+      });
+    }
+
+
   }
 
   return (
@@ -99,6 +125,7 @@ export const FormColection = () => {
         />
         {selectedCollection && (
           <Button
+            disabled={isLoading}
             variant="destructive"
             size="sm">
             <Trash className="h-4 w-4" />
@@ -121,7 +148,7 @@ export const FormColection = () => {
                     <FormLabel>Titulo</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={false}
+                        disabled={isLoading}
                         placeholder="Nombre de la colección"
                         {...field}
                       />
@@ -141,7 +168,7 @@ export const FormColection = () => {
                     <FormLabel>Descripción</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={false}
+                        disabled={isLoading}
                         placeholder="Descripción de la colección"
                         {...field}
                       />
@@ -164,6 +191,7 @@ export const FormColection = () => {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
+                            disabled={isLoading}
                             variant={"outline"}
                             className={cn("w-full pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
@@ -208,6 +236,7 @@ export const FormColection = () => {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
+                            disabled={isLoading}
                             variant={"outline"}
                             className={cn("w-full pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
@@ -245,17 +274,13 @@ export const FormColection = () => {
 
             </div>
             <div className="flex flex-col items-center gap-4 border p-4 rounded-lg shadow-sm">
-              {preview || selectedCollection?.image && (
+              {preview || selectedCollection?.collection_image && (
                 <>
                   <h2 className="font-medium text-lg">
                     Vista previa
                   </h2>
                   <img
-                    src={
-                      typeof selectedCollection?.image === "string"
-                        ? selectedCollection.image
-                        : preview ?? undefined
-                    }
+                    src={preview || selectedCollection?.collection_image || undefined}
                     alt="Vista previa"
                     className="w-96 h-64 object-cover rounded-lg shadow-lg"
                   />
@@ -269,6 +294,7 @@ export const FormColection = () => {
                     <FormLabel>Imagen</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={isLoading}
                         type="file"
                         accept="image/*"
                         onChange={(e) => {
@@ -290,7 +316,10 @@ export const FormColection = () => {
 
             </div>
           </div>
-          <Button type="submit">{action}</Button>
+          <Button disabled={isLoading} type="submit">
+            <Loader2 className={`mr-2 h-4 w-4 animate-spin ${isLoading ? 'inline-block' : 'hidden'}`} />
+            {action}
+          </Button>
         </form>
       </Form>
     </>
