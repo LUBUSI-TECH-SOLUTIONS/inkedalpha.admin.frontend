@@ -3,9 +3,7 @@ import axios, { AxiosHeaders } from "axios";
 import type { AxiosResponse } from "axios";
 import type { CategoryType } from "@/features/category/types/categoryType";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
 
-const navigate = useNavigate();
 
 export const CategoryService = {
   getAllCategories: async ():
@@ -53,7 +51,6 @@ export const CategoryService = {
           })
         });
       toast.success("Categoria creada exitosamente.");
-      navigate(-1);
       return response;
     } catch (error: unknown) {
       let errorMessage = "Error al crear la categoria.";
@@ -74,7 +71,6 @@ export const CategoryService = {
       const response: AxiosResponse<CategoryType>
         = await apiClient.patch<CategoryType>(`v1/product-category/${categoryId}`, categoryData);
       toast.success("Categoria actualizada exitosamente.");
-      navigate(-1);
       return response;
     } catch (error: unknown) {
       let errorMessage = "Error al actualizar la Categoria.";

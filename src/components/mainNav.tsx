@@ -37,10 +37,16 @@ export const MainNav = ({
   ]
   return (
     <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)} {...props}>
+      <img
+        src="/inkedalpha-logo.webp"
+        alt="Logo"
+        className="hidden h-12 w-auto sm:inline-block"
+
+      />
       {routes.map((route) => (
-        <Link 
-          key={route.href} 
-          to={route.href} 
+        <Link
+          key={route.href}
+          to={route.href}
           className={cn(
             "text-sm font-medium transition-colors hover:text-primary",
             route.active ? "text-black dark:text-white" : "text-muted-foreground"
