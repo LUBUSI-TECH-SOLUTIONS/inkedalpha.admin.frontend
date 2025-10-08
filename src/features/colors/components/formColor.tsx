@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useColorStore } from "../store/colorStore";
+import { ButtonReturn } from "@/components/ui/buttonReturn";
 
 const formSchema = z.object({
   color_name: z.string().min(1, {
@@ -56,11 +57,13 @@ export const FormColor = () => {
   return (
     <>
       <div className="flex items-center justify-between">
-
-        <Heading
-          title={title}
-          description={description}
-        />
+        <div className="flex items-center gap-3">
+          <ButtonReturn variant="ghost" />
+          <Heading
+            title={title}
+            description={description}
+          />
+        </div>
         {
           selectedColor && (
             <Button

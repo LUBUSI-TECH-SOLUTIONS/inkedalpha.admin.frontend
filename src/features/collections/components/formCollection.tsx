@@ -15,6 +15,7 @@ import { format } from "date-fns"
 import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
 import { useCollection } from "../store/useCollection";
+import { ButtonReturn } from "@/components/ui/buttonReturn";
 
 const formSchema = z.object({
   collection_name:
@@ -119,10 +120,13 @@ export const FormColection = () => {
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading
-          title={title}
-          description={description}
-        />
+        <div className="flex items-center gap-3">
+          <ButtonReturn variant="ghost" />
+          <Heading
+            title={title}
+            description={description}
+          />
+        </div>
         {selectedCollection && (
           <Button
             disabled={isLoading}

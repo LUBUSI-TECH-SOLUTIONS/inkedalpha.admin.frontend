@@ -9,6 +9,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useCategory } from "../store/useCategory";
+import { ButtonReturn } from "@/components/ui/buttonReturn";
 
 const formSchema = z.object({
   category_name:
@@ -75,7 +76,7 @@ export const FormCategory = () => {
         category_name: data.category_name,
         category_description: data.category_description,
         image: data.image || null,
-        category_image: selectedCategory.category_image, 
+        category_image: selectedCategory.category_image,
         parent_category_id: data.parent_category_id ? Number(data.parent_category_id) : null,
         parent_category_name: selectedCategory.parent_category_name
       })
@@ -85,21 +86,25 @@ export const FormCategory = () => {
         category_name: data.category_name,
         category_description: data.category_description,
         image: data.image || null,
-        category_image: "", 
+        category_image: "",
         parent_category_id: data.parent_category_id ? Number(data.parent_category_id) : null,
         parent_category_name: null
       })
-      
+
     }
   }
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading
-          title={title}
-          description={description}
-        />
+        <div className="flex items-center gap-3">
+          <ButtonReturn variant="ghost" />
+          <Heading
+            title={title}
+            description={description}
+          />
+
+        </div>
         {selectedCategory && (
           <Button
             disabled={isLoading}
@@ -109,7 +114,7 @@ export const FormCategory = () => {
           </Button>
         )}
       </div>
-      <Separator />
+      <Separator className="my-2" />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
