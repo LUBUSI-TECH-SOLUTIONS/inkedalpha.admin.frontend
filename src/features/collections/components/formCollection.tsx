@@ -16,6 +16,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
 import { useCollection } from "../store/useCollection";
 import { ButtonReturn } from "@/components/ui/buttonReturn";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 const formSchema = z.object({
   collection_name:
@@ -40,9 +42,11 @@ const formSchema = z.object({
 type CollectionFormValues = z.infer<typeof formSchema>;
 
 export const FormColection = () => {
+  const { id } = useParams();
 
   const {
     selectedCollection,
+    selectCollection,
     updateCollection,
     createCollection,
     isLoading
@@ -53,7 +57,17 @@ export const FormColection = () => {
   const toastMessage = selectedCollection ? "Colección actualizada." : "Colección creada.";
   const action = selectedCollection ? "Guardar cambios" : "Crear colección";
 
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string>("");
+
+  useEffect(() => {
+    if (!id) {
+      selectCollection(null);
+      form.reset();
+      setPreview("");
+      return;
+    }
+  }, [id]);
+
   const form = useForm<CollectionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: selectedCollection
@@ -75,10 +89,11 @@ export const FormColection = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    const file = files && files[0]; // obtiene el primer archivo si existe
+    const file = files && files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl); // guardamos la url temporal en el estado
+      setPreview(imageUrl);
+      console.log(imageUrl);
     }
   };
 
@@ -107,14 +122,12 @@ export const FormColection = () => {
       // Crear nueva colección
       createCollection(collectionData).then(() => {
         toast.success(toastMessage);
-        form.reset(); // Reiniciar el formulario después de crear
-        setPreview(null); // Limpiar la vista previa
+        form.reset();
+        setPreview("");
       }).catch(() => {
         toast.error("Error al crear la colección.");
       });
     }
-
-
   }
 
   return (
@@ -136,14 +149,14 @@ export const FormColection = () => {
           </Button>
         )}
       </div>
-      <Separator />
+      <Separator className="my-3" />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full pt-3"
         >
           <div className="md:grid md:grid-cols-2 gap-8">
-            <div className="md:grid md:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-4">
               <FormField
                 control={form.control}
                 name="collection_name"
@@ -278,13 +291,25 @@ export const FormColection = () => {
 
             </div>
             <div className="flex flex-col items-center gap-4 border p-4 rounded-lg shadow-sm">
-              {preview || selectedCollection?.collection_image && (
+              {preview && (
                 <>
                   <h2 className="font-medium text-lg">
                     Vista previa
                   </h2>
                   <img
-                    src={preview || selectedCollection?.collection_image || undefined}
+                    src={preview || selectedCollection?.collection_image || ""}
+                    alt="Vista previa"
+                    className="w-96 h-64 object-cover rounded-lg shadow-lg"
+                  />
+                </>
+              )}
+              {selectedCollection?.collection_image && (
+                <>
+                  <h2 className="font-medium text-lg">
+                    Vista previa
+                  </h2>
+                  <img
+                    src={preview || selectedCollection?.collection_image || ""}
                     alt="Vista previa"
                     className="w-96 h-64 object-cover rounded-lg shadow-lg"
                   />
@@ -295,24 +320,20 @@ export const FormColection = () => {
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Imagen</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={isLoading}
+                        disabled={isLoading || !!selectedCollection}
                         type="file"
                         accept="image/*"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            field.onChange(file); // Guardamos el objeto File en el form
+                            field.onChange(file);
+                            handleFileChange(e);
                           }
-                          handleFileChange(e); // Actualizamos la vista previa
                         }}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Imagen representativa de la colección.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
