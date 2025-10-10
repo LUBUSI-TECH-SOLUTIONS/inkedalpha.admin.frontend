@@ -7,9 +7,12 @@ import { Loader2, Trash } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCategory } from "../store/useCategory";
 import { ButtonReturn } from "@/components/ui/buttonReturn";
+import type { CategoryType } from "../types/categoryType";
+import { toast } from "sonner";
+import { useParams } from "react-router-dom";
 
 const formSchema = z.object({
   category_name:
@@ -31,26 +34,37 @@ const formSchema = z.object({
 type CategoryFormValues = z.infer<typeof formSchema>;
 
 export const FormCategory = () => {
-
+  const { id } = useParams();
   const {
     createCategory,
     updateCategory,
+    selectCategory,
     selectedCategory,
     isLoading
   } = useCategory();
 
   const title = selectedCategory ? "Editar Categoría" : "Crear Categoría";
   const description = selectedCategory ? "Edita la categoría seleccionada" : "Crea una nueva categoría";
+  const toastMessage = selectedCategory ? "Categoría actualizada exitosamente." : "Categoría creada exitosamente.";
   const action = selectedCategory ? "Guardar cambios" : "Crear categoría";
 
   const [preview, setPreview] = useState<string | null>(null);
+  useEffect(() => {
+    if (!id) {
+      selectCategory(null);
+      form.reset();
+      setPreview(null);
+      return;
+    }
+  }, [id]);
+
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: selectedCategory
       ? {
         category_name: selectedCategory.category_name || "",
         category_description: selectedCategory.category_description || "",
-        parent_category_id: selectedCategory.parent_category_id ? String(selectedCategory.parent_category_id) : undefined,
+        parent_category_id: selectedCategory.parent_category_id ? selectedCategory.parent_category_id : undefined,
       }
       : {
         category_name: "",
@@ -70,27 +84,35 @@ export const FormCategory = () => {
   };
 
   const onSubmit = (data: CategoryFormValues) => {
+    const { category_name, category_description, image, parent_category_id } = data;
+
+    const categoryData: CategoryType = {
+      category_name,
+      category_description,
+      image: image || null,
+      parent_category_id: parent_category_id || "",
+      category_image: selectedCategory?.category_image || "",
+      parent_category_name: ""
+    }
+
     if (selectedCategory) {
       updateCategory({
         product_category_id: selectedCategory.product_category_id,
-        category_name: data.category_name,
-        category_description: data.category_description,
-        image: data.image || null,
-        category_image: selectedCategory.category_image,
-        parent_category_id: data.parent_category_id ? Number(data.parent_category_id) : null,
-        parent_category_name: selectedCategory.parent_category_name
-      })
-    }
-    else {
-      createCategory({
-        category_name: data.category_name,
-        category_description: data.category_description,
-        image: data.image || null,
-        category_image: "",
-        parent_category_id: data.parent_category_id ? Number(data.parent_category_id) : null,
-        parent_category_name: null
-      })
+        ...categoryData
+      }).then(() => {
+        toast.success(toastMessage);
+      }).catch(() => {
+        toast.error("Error al actualizar la categoría");
+      });
 
+    } else {
+      createCategory(categoryData).then(() => {
+        toast.success(toastMessage);
+        form.reset();
+        setPreview(null);
+      }).catch(() => {
+        toast.error("Error al crear la categoría");
+      });
     }
   }
 
@@ -121,7 +143,7 @@ export const FormCategory = () => {
           className="space-y-8 w-full pt-3"
         >
           <div className="md:grid md:grid-cols-2 gap-8">
-            <div className="md:grid md:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-4">
               <FormField
                 control={form.control}
                 name="category_name"
@@ -186,7 +208,7 @@ export const FormCategory = () => {
 
             </div>
             <div className="flex flex-col items-center gap-4 border p-4 rounded-lg shadow-sm">
-              {preview || selectedCategory?.category_image && (
+              {preview && (
                 <>
                   <h2 className="font-medium text-lg">
                     Vista previa
@@ -198,12 +220,20 @@ export const FormCategory = () => {
                   />
                 </>
               )}
+              {
+                selectedCategory?.category_image && (
+                  <img
+                    src={selectedCategory.category_image}
+                    alt="Imagen de la categoria"
+                    className="w-96 h-64 object-cover rounded-lg shadow-lg"
+                  />
+                )
+              }
               <FormField
                 control={form.control}
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Imagen</FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
@@ -212,15 +242,12 @@ export const FormCategory = () => {
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            field.onChange(file); // Guardamos el objeto File en el form
+                            field.onChange(file);
+                            handleFileChange(e);
                           }
-                          handleFileChange(e); // Actualizamos la vista previa
                         }}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Imagen representativa de la categoria.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

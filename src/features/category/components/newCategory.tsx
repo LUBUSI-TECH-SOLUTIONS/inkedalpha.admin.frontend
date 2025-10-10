@@ -1,4 +1,4 @@
-import { FormCategory } from "./formCollection"
+import { FormCategory } from "./formCategory"
 
 export const NewCategory = () => {
   return (

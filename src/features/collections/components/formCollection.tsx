@@ -108,7 +108,6 @@ export const FormColection = () => {
       end_date: formatDate(end_date),
     };
     if (selectedCollection) {
-      // Actualizar colección existente
       updateCollection({
         ...collectionData,
         collection_id: selectedCollection.collection_id
@@ -119,7 +118,6 @@ export const FormColection = () => {
       });
     }
     else {
-      // Crear nueva colección
       createCollection(collectionData).then(() => {
         toast.success(toastMessage);
         form.reset();

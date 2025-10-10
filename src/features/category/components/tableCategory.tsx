@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useCategory } from "../store/useCategory"
-import { getColumnsCollection } from "./columnsCollection"
+import { getColumnsCollection } from "./columnsCategory"
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Loader2 } from "lucide-react"

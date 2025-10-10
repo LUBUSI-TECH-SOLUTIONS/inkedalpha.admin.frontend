@@ -49,7 +49,7 @@ export const useCategory = create<CategoryStore>((set) => ({
       if (!categoryData.product_category_id) {
         throw new Error("collection_id es requerido para actualizar la colección.");
       }
-      const response = await CategoryService.updateCategory(categoryData.product_category_id, categoryData);
+      const response = await CategoryService.updateCategory(categoryData, categoryData.product_category_id);
       set((state) => ({
         categories: state.categories.map((category) =>
           category.product_category_id === response.data.product_category_id ? response.data : category
@@ -66,7 +66,7 @@ export const useCategory = create<CategoryStore>((set) => ({
     try {
       await CategoryService.deleteCategory(categoryId);
       set((state) => ({
-        categories: state.categories.filter((category) => category.product_category_id !== Number(categoryId))
+        categories: state.categories.filter((category) => category.product_category_id !== categoryId)
       }));
     } catch (error: unknown) {
       throw error;

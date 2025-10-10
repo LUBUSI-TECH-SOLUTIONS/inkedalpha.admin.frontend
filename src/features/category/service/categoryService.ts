@@ -28,8 +28,8 @@ export const CategoryService = {
     Promise<AxiosResponse<CategoryType>> => {
     try {
       const formData = new FormData();
-      if (categoryData.category_image) {
-        formData.append('category_image', categoryData.category_image);
+      if (categoryData.image) {
+        formData.append('image', categoryData.image);
       }
       if (categoryData.category_name) {
         formData.append('category_name', categoryData.category_name);
@@ -45,7 +45,7 @@ export const CategoryService = {
       }
 
       const response: AxiosResponse<CategoryType>
-        = await apiClient.post<CategoryType>('v1/product-categories', formData, {
+        = await apiClient.post<CategoryType>('v1/product-category', formData, {
           headers: AxiosHeaders.from({
             "Content-Type": "multipart/form-data"
           })
@@ -65,7 +65,7 @@ export const CategoryService = {
     }
   },
 
-  updateCategory: async (categoryId: number, categoryData: CategoryType):
+  updateCategory: async (categoryData: CategoryType, categoryId: string):
     Promise<AxiosResponse<CategoryType>> => {
     try {
       const response: AxiosResponse<CategoryType>
