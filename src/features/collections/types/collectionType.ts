@@ -1,5 +1,5 @@
 export interface CollectionType {
-  collection_id?: string;
+  collection_id: string;
   collection_name?: string;
   collection_description?: string;
   image?: File | null;

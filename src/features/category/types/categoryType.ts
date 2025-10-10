@@ -1,5 +1,5 @@
 export interface CategoryType {
-  product_category_id?: string;
+  product_category_id: string;
   category_name: string;
   category_image: string;
   image?: File | null;

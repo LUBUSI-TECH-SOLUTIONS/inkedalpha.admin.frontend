@@ -33,6 +33,11 @@ export const MainNav = ({
       href: "/sizes",
       label: "Tallas",
       active: location.pathname === "/sizes"
+    },
+    {
+      href: "/products",
+      label: "Productos",
+      active: location.pathname === "/products"
     }
   ]
   return (

@@ -12,6 +12,8 @@ import { SizePage } from "@/features/size/sizePage";
 import { NewSize } from "@/features/size/components/newSize";
 import { CategoryPage } from "@/features/category/categoryPage";
 import { NewCategory } from "@/features/category/components/newCategory";
+import { ProductsPage } from "@/features/products/productsPage";
+import { NewProduct } from "@/features/products/components/newProduct";
 
 const routes = createBrowserRouter([
   {
@@ -79,6 +81,18 @@ const routes = createBrowserRouter([
           {
             path: "/sizes/:id",
             element: <NewSize/>,
+          },
+          { 
+            path: "/products",
+            element: <ProductsPage />,
+          },
+          {
+            path: "/products/new",
+            element: <NewProduct/>,
+          },
+          {
+            path: "/products/:id",
+            element: <NewProduct/>,
           }
         ]
       }
