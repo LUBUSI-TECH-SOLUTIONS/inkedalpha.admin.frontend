@@ -93,7 +93,6 @@ export const FormColection = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setPreview(imageUrl);
-      console.log(imageUrl);
     }
   };
 

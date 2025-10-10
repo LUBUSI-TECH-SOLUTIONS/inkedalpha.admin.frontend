@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useColorStore } from "../store/colorStore";
 import { ButtonReturn } from "@/components/ui/buttonReturn";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   color_name: z.string().min(1, {
@@ -24,11 +26,18 @@ const formSchema = z.object({
 type ColorFormValues = z.infer<typeof formSchema>
 
 export const FormColor = () => {
-  const { selectedColor, updateColor, createColor, isLoading } = useColorStore();
+  const {
+    selectedColor,
+    updateColor,
+    createColor,
+    isLoading
+  } = useColorStore();
 
   const title = selectedColor ? 'Edit color' : 'Create color';
   const description = selectedColor ? 'Edit a color.' : 'Add a new color';
   const action = selectedColor ? 'Save changes' : 'Create';
+
+
 
   const onSubmit = (data: ColorFormValues) => {
     try {
