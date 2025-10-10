@@ -1,29 +1,28 @@
 import { useMemo } from "react";
-import { useColorStore } from "../store/colorStore";
-import { getColumnsColor } from "./columsColor";
+import { useSizeStore } from "../store/sizeStore";
+import { getColumnsSize } from "./columSize";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2 } from "lucide-react";
 
-
-export const ColorTable = () => {
+export const SizeTable = () => {
   const {
-    isLoading,
-    colors
-  } = useColorStore();
+    sizes,
+    isLoading
+  } = useSizeStore();
 
   const columns = useMemo(() => {
-    return getColumnsColor();
+    return getColumnsSize();
   }, [isLoading]);
 
   const table = useReactTable({
-    data: colors,
+    data: sizes,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
 
   return (
-    <div className="rounded-md border">
+     <div className="rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -51,7 +50,7 @@ export const ColorTable = () => {
                 } className="h-24 text-center">
                   <div className="flex justify-center items-center">
                     <Loader2 className="h-6 w-4 animate-spin mr-2" />
-                    Cargando colores...
+                    Cargando tallas...
                   </div>
                 </TableCell>
               </TableRow>
@@ -71,7 +70,7 @@ export const ColorTable = () => {
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No se encontraron colores.
+                  No se encontraron tallas.
                 </TableCell>
               </TableRow>
             )

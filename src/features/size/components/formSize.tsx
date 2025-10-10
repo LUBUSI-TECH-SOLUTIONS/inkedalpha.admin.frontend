@@ -1,5 +1,4 @@
 import z from "zod";
-import type { SizeType } from "../types/sizeType";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Heading } from "@/components/ui/heading";
@@ -8,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-interface SizeProps {
-  initialData?: SizeType | null;
-}
+import { ButtonReturn } from "@/components/ui/buttonReturn";
+import { useSizeStore } from "../store/sizeStore";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   size_name: z.string().min(1, {
@@ -31,60 +30,94 @@ const formSchema = z.object({
 
 type SizeFormValues = z.infer<typeof formSchema>
 
-export const FormSize = ({
-  initialData
-}: SizeProps) => {
-  const title = initialData ? 'Edit size' : 'Create size';
-  const description = initialData ? 'Edit a size.' : 'Add a new size';
-  const toastMessage = initialData ? 'Size updated.' : 'Size created.';
-  const action = initialData ? 'Save changes' : 'Create';
+export const FormSize = () => {
+  const { id } = useParams()
+
+  const {
+    reset,
+    selectedSize,
+    createSize,
+    updateSize,
+  } = useSizeStore();
+
+  const title = selectedSize ? 'Edit size' : 'Create size';
+  const description = selectedSize ? 'Edit a size.' : 'Add a new size';
+  const action = selectedSize ? 'Save changes' : 'Create';
 
   const form = useForm<SizeFormValues>({
-    defaultValues: initialData
+    defaultValues: selectedSize
       ? {
-          size_name: initialData.size_name ?? '',
-          sort_order: initialData.sort_order ?? 1,
-          size_value: initialData.size_value ?? ''
-        }
+        ...selectedSize,
+        size_value: selectedSize.size_value ?? '',
+      }
       : {
-          size_name: '',
-          sort_order: 1,
-          size_value: ''
-        }
+        size_name: '',
+        size_value: '',
+        sort_order: 1
+      }
   })
 
+  useEffect(() => {
+    if (!id) {
+      reset();
+      form.reset();
+      return;
+    }
+  }, [id])
+
   const onSubmit = (data: SizeFormValues) => {
-    console.log(data);
-    toast.success(toastMessage);
+    try {
+      if (selectedSize) {
+        updateSize({
+          size_id: selectedSize.size_id,
+          ...data,
+          sort_order: data.sort_order ?? 1,
+        });
+      } else {
+        createSize({
+          ...data,
+          sort_order: data.sort_order ?? 1,
+        });
+      }
+    } catch (error) {
+      toast.error('Something went wrong, please try again.');
+      console.log(error);
+      return;
+    }
   }
 
   return (
     <>
-      <Heading
-        title={title}
-        description={description}
-      />
-      {
-        initialData && (
-          <Button
-            disabled={false}
-            variant="destructive"
-            size="sm"
-            onClick={() => console.log("delete")}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )
-      }
+      <div className="flex items-center justify-between">
+        <div className="flex items-center mb-4">
+          <ButtonReturn variant="ghost" />
+          <Heading
+            title={title}
+            description={description}
+          />
+        </div>
+        {
+          selectedSize && (
+            <Button
+              disabled={false}
+              variant="destructive"
+              size="sm"
+              onClick={() => console.log("delete")}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          )
+        }
+      </div>
       <Separator className="my-4" />
 
       <Form {...form}>
-        <form 
+        <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-8"
         >
           <div className="md:grid md:grid-cols-3 md:gap-8">
-            <FormField 
+            <FormField
               control={form.control}
               name="size_name"
               render={({ field }) => (
@@ -97,8 +130,8 @@ export const FormSize = ({
                 </FormItem>
               )}
             />
-            
-            <FormField 
+
+            <FormField
               control={form.control}
               name="size_value"
               render={({ field }) => (
@@ -111,7 +144,7 @@ export const FormSize = ({
                 </FormItem>
               )}
             />
-            <FormField 
+            <FormField
               control={form.control}
               name="sort_order"
               render={({ field }) => (

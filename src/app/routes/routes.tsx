@@ -75,6 +75,10 @@ const routes = createBrowserRouter([
           {
             path: "/sizes/new",
             element: <NewSize/>,
+          },
+          {
+            path: "/sizes/:id",
+            element: <NewSize/>,
           }
         ]
       }

@@ -9,8 +9,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useColorStore } from "../store/colorStore";
 import { ButtonReturn } from "@/components/ui/buttonReturn";
-import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 const formSchema = z.object({
   color_name: z.string().min(1, {
@@ -26,7 +26,10 @@ const formSchema = z.object({
 type ColorFormValues = z.infer<typeof formSchema>
 
 export const FormColor = () => {
+
+  const { id } = useParams()
   const {
+    reset,
     selectedColor,
     updateColor,
     createColor,
@@ -37,7 +40,20 @@ export const FormColor = () => {
   const description = selectedColor ? 'Edit a color.' : 'Add a new color';
   const action = selectedColor ? 'Save changes' : 'Create';
 
+  const form = useForm<ColorFormValues>({
+    defaultValues: selectedColor || {
+      color_name: '',
+      hexadecimal: '#'
+    }
+  })
 
+  useEffect(() => {
+    if (!id) {
+      reset();
+      form.reset();
+      return;
+    }
+  }, [id])
 
   const onSubmit = (data: ColorFormValues) => {
     try {
@@ -55,13 +71,6 @@ export const FormColor = () => {
       return;
     }
   }
-
-  const form = useForm<ColorFormValues>({
-    defaultValues: selectedColor || {
-      color_name: '',
-      hexadecimal: '#'
-    }
-  })
 
   return (
     <>
