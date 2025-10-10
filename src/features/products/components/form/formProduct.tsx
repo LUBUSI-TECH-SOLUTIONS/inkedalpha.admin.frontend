@@ -58,16 +58,18 @@ export const FormProduct = () => {
         }
       </div>
       <Separator className="my-4" />
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8"
-        >
-          <GeneralDataForm />
-          <ModelInfoForm/>
-          <ExtraInfoForm/>
-        </form>
-      </Form>
+      <main className="mx-auto max-w-4xl px-6 py-8">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8"
+          >
+            <GeneralDataForm />
+            <ModelInfoForm />
+            <ExtraInfoForm />
+          </form>
+        </Form>
+      </main>
     </>
   )
 }
