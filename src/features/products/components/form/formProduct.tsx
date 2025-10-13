@@ -10,7 +10,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { productFormSchema, type ProductFormData } from "./schema/productSchema"
 import { ModelInfoForm } from "./components/modelInfoForm"
 import { ExtraInfoForm } from "./components/extraInfoForm"
-
+import { AttributesForm } from "./components/attributesForm"
+import { VariantForm } from "./components/variantForm"
 export const FormProduct = () => {
   const selectedProduct = false
 
@@ -67,6 +68,8 @@ export const FormProduct = () => {
             <GeneralDataForm />
             <ModelInfoForm />
             <ExtraInfoForm />
+            <AttributesForm/>
+            <VariantForm/>
           </form>
         </Form>
       </main>

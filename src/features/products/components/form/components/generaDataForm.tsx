@@ -1,5 +1,4 @@
-import { useFormContext } from "react-hook-form"
-import type { ProductFormData } from "../schema/productSchema"
+
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCategory } from "@/features/category/store/useCategory"
@@ -7,6 +6,8 @@ import { useEffect } from "react"
 import { useCollection } from "@/features/collections/store/useCollection"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { useFormContext } from "react-hook-form"
+import type { ProductFormData } from "../schema/productSchema"
 
 export const GeneralDataForm = () => {
   const { control } = useFormContext<ProductFormData>()
