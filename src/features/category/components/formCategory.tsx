@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { useCategory } from "../store/useCategory";
 import { ButtonReturn } from "@/components/ui/buttonReturn";
-import type { CategoryType } from "../types/categoryType";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 
@@ -86,19 +85,21 @@ export const FormCategory = () => {
   const onSubmit = (data: CategoryFormValues) => {
     const { category_name, category_description, image, parent_category_id } = data;
 
-    const categoryData: CategoryType = {
+    // Remove product_category_id from categoryData before spreading
+    const { product_category_id, ...categoryDataWithoutId } = {
+      ...selectedCategory,
       category_name,
       category_description,
       image: image || null,
       parent_category_id: parent_category_id || "",
       category_image: selectedCategory?.category_image || "",
       parent_category_name: ""
-    }
+    };
 
     if (selectedCategory) {
       updateCategory({
         product_category_id: selectedCategory.product_category_id,
-        ...categoryData
+        ...categoryDataWithoutId
       }).then(() => {
         toast.success(toastMessage);
       }).catch(() => {
@@ -106,7 +107,10 @@ export const FormCategory = () => {
       });
 
     } else {
-      createCategory(categoryData).then(() => {
+      createCategory({
+        product_category_id: "",
+        ...categoryDataWithoutId
+      }).then(() => {
         toast.success(toastMessage);
         form.reset();
         setPreview(null);

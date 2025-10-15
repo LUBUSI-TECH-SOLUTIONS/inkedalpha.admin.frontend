@@ -5,7 +5,7 @@ import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import { Trash } from "lucide-react"
 import { GeneralDataForm } from "./components/generaDataForm"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { productFormSchema, type ProductFormData } from "./schema/productSchema"
 import { ModelInfoForm } from "./components/modelInfoForm"
@@ -16,7 +16,7 @@ export const FormProduct = () => {
   const selectedProduct = false
 
   const form = useForm<ProductFormData>({
-    resolver: zodResolver(productFormSchema),
+    resolver: zodResolver(productFormSchema) as unknown as Resolver<ProductFormData>,
     defaultValues: {
       product_category_id: "",
       product_name: "",
@@ -25,7 +25,7 @@ export const FormProduct = () => {
       model_wearing: "",
       care_instructions: "",
       story_time: "",
-      attributes: [], // always defined as array
+      attributes: undefined,
       items: [],
       collection_id: ""
     }

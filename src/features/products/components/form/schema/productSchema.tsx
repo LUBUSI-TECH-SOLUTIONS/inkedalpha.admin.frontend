@@ -85,8 +85,8 @@ const productFormSchema = z.object({
   care_instructions: z.string().optional(),
   story_time: z.string().optional(),
   attributes: z.array(attributeSchema)
-    .default([])
-    .transform((val) => val ?? []),
+    .optional()
+    .default([]),
   items: z.array(productItemSchema).min(1, {
     message: "Debes agregar al menos una variante de color"
   }),
