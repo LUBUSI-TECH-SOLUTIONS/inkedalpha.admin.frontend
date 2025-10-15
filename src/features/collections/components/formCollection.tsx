@@ -100,6 +100,7 @@ export const FormColection = () => {
     const { collection_name, collection_description, image, start_date, end_date } = data;
 
     const collectionData: CollectionType = {
+      collection_id: selectedCollection?.collection_id || "", // Provide collection_id (empty string for new)
       collection_name,
       collection_description,
       image: image || null,
