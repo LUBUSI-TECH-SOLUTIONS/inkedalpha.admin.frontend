@@ -9,9 +9,9 @@ import { useForm, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { productFormSchema, type ProductFormData } from "./schema/productSchema"
 import { ModelInfoForm } from "./components/modelInfoForm"
-import { ExtraInfoForm } from "./components/extraInfoForm"
 import { AttributesForm } from "./components/attributesForm"
 import { VariantForm } from "./components/variantForm"
+import { ExtraInfoForm } from "./components/extraInfoForm"
 export const FormProduct = () => {
   const selectedProduct = false
 
