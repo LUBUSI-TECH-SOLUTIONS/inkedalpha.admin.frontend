@@ -29,21 +29,12 @@ export const  UserButton = () => {
           size="icon"
           variant="ghost"
         >
-          <Avatar className="h-10 w-10 ">
+          <Avatar className="h-10 w-10 border border-border">
             <AvatarImage src={user.user_metadata.avatar_url} />
             <AvatarFallback className="rounded-lg">
               {user.user_metadata.name?.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          {/* <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">
-              {user.user_metadata.name || user.user_metadata.full_name || 'No name'}
-            </span>
-            <span className="text-muted-foreground truncate text-xs">
-              {user.email}
-            </span>
-          </div>
-          <EllipsisVertical className="ml-auto size-4" /> */}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

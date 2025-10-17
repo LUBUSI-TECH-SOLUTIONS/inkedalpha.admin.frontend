@@ -23,7 +23,7 @@ export const GeneralDataForm = () => {
       <div className="space-y-4">
         <FormField
           control={control}
-          name="product_category_id"
+          name="collection_id"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Colección</FormLabel>

@@ -12,6 +12,7 @@ import { ModelInfoForm } from "./components/modelInfoForm"
 import { AttributesForm } from "./components/attributesForm"
 import { VariantForm } from "./components/variantForm"
 import { ExtraInfoForm } from "./components/extraInfoForm"
+import { useEffect } from "react"
 export const FormProduct = () => {
   const selectedProduct = false
 
@@ -33,7 +34,11 @@ export const FormProduct = () => {
 
   const onSubmit = (data: any) => {
     console.log(data)
+    console.log("submit")
   }
+  useEffect(() => {
+    console.log(form.formState.errors)
+  }, [])
 
   return (
     <>
@@ -68,8 +73,11 @@ export const FormProduct = () => {
             <GeneralDataForm />
             <ModelInfoForm />
             <ExtraInfoForm />
-            <AttributesForm/>
-            <VariantForm/>
+            <AttributesForm />
+            <VariantForm />
+            <Button type="submit" className="w-full sm:w-auto">
+              Crear producto
+            </Button>
           </form>
         </Form>
       </main>
