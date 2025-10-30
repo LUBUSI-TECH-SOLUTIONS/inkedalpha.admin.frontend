@@ -1,14 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Plus } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useProductStore } from "./store/productStore";
+import { AllProducts } from "./components/allProdcuts";
 
 export const ProductsPage = () => {
   const navigate = useNavigate();
+  const { fetchProducts } = useProductStore();
 
   const goToProducts = () => {
     navigate("/products/new");
   }
+
+  useEffect(() => {
+    fetchProducts()
+  }, [fetchProducts])
 
   return (
     <>
@@ -22,7 +30,7 @@ export const ProductsPage = () => {
           Agregar Producto
         </Button>
       </div>
-      {/* <ProductTable/> */}
+      <AllProducts/>
     </>
   )
 }

@@ -43,7 +43,7 @@ export const ProductService = {
     Promise<AxiosResponse<ProductResponse>> => {
     try {
       const response: AxiosResponse<ProductResponse>
-        = await apiClient.post<ProductResponse>('v1/create-product', productData);
+        = await apiClient.post<ProductResponse>('v1/product/full', productData);
       toast.success("Producto creado exitosamente.");
       return response;
     } catch (error: unknown) {

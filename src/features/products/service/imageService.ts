@@ -4,14 +4,14 @@ import { toast } from "sonner";
 
 export const ImageService = {
   createImage: async (imageData: FormData):
-    Promise<AxiosResponse<{ imageUrl: string }>> => {
+    Promise<AxiosResponse<{ image_url: string }>> => {
     const formData = new FormData();
     if (imageData) {
       formData.append('image', imageData.get('image') as Blob);
     }
     try {
-      const response: AxiosResponse<{ imageUrl: string }>
-        = await apiClient.post<{ imageUrl: string }>('v1/upload-product-image', formData, {
+      const response: AxiosResponse<{ image_url: string }>
+        = await apiClient.post<{ image_url: string }>('v1/product-image', formData, {
           headers: AxiosHeaders.from({
             "Content-Type": "multipart/form-data"
           })

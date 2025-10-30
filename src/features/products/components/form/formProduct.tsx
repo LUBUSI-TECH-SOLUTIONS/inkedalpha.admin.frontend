@@ -10,10 +10,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { productFormSchema, type ProductFormData } from "./schema/productSchema"
 import { ModelInfoForm } from "./components/modelInfoForm"
 import { AttributesForm } from "./components/attributesForm"
-import { VariantForm } from "./components/variantForm"
-import { ExtraInfoForm } from "./components/extraInfoForm"
+import { VariantForm } from "@/features/products/components/form/components/variantForm"
+// import { ExtraInfoForm } from "@/features/products/components/form/components/extraInfoForm"
+import { useProductStore } from "@/features/products/store/productStore"
+import { Spinner } from "@/components/ui/spinner"
 export const FormProduct = () => {
   const selectedProduct = false
+  const { createProduct, isLoading } = useProductStore()
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema) as unknown as Resolver<ProductFormData>,
@@ -31,10 +34,14 @@ export const FormProduct = () => {
     }
   })
 
-  const onSubmit = (data: any) => {
-    console.log(data)
+  const onSubmit = async (data: any) => {
+    try {
+      await createProduct(data)
+      form.reset()
+    } catch (error) {
+      throw error
+    }
   }
-
   return (
     <>
       <div className="flex items-center justify-between">
@@ -67,9 +74,14 @@ export const FormProduct = () => {
           >
             <GeneralDataForm />
             <ModelInfoForm />
-            <ExtraInfoForm />
-            <AttributesForm/>
-            <VariantForm/>
+            {/* <ExtraInfoForm /> */}
+            <AttributesForm />
+            <VariantForm />
+            <Button type="submit" className="w-full sm:w-auto" disabled={isLoading}>
+              {isLoading ? <>
+                <Spinner /> Guardando...
+              </> : "Guardar Producto"}
+            </Button>
           </form>
         </Form>
       </main>

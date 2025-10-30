@@ -9,6 +9,7 @@ import { useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useSizeStore } from "@/features/size/store/sizeStore"
+import { ImageForm } from "./imageForm"
 
 export const VariantForm = () => {
   const { colors, fetchColors, isLoading: isColorLoading } = useColorStore()
@@ -149,6 +150,10 @@ export const VariantForm = () => {
                 )}
               />
             </div>
+            <ImageForm
+              index={index}
+              item={_item}
+            />
 
             <div className="space-3">
               <div className="flex items-center justify-between">
@@ -212,14 +217,14 @@ export const VariantForm = () => {
                           </FormItem>
                         )}
                       />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeVariation(index, varIndex)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeVariation(index, varIndex)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -240,3 +245,5 @@ export const VariantForm = () => {
   )
 
 }
+
+

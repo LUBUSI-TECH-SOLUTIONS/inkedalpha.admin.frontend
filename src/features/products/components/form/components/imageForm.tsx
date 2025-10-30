@@ -4,6 +4,9 @@ import { useFormContext } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Upload, X } from "lucide-react"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { useUploadImageStore } from "@/features/products/store/imageStore"
+import { Spinner } from "@/components/ui/spinner"
+import { useEffect } from "react"
 
 interface ImageFormProps {
   index: number
@@ -13,21 +16,22 @@ interface ImageFormProps {
 export const ImageForm = ({
   item, index
 }: ImageFormProps) => {
-  const { control, watch, setValue } = useFormContext<ProductFormData>()
-  const handleImageUpload = (itemIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files) return
+  const { control, setValue } = useFormContext<ProductFormData>()
+  const { uploadImages, imagesByIndex, loading } = useUploadImageStore()
 
-    const itemsArray = watch("items")
-    const updated = [...itemsArray]
-    const newImages = Array.from(files).map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }))
+  const images = imagesByIndex[index] || [];
 
-    updated[itemIndex].images = [...updated[itemIndex].images, ...newImages]
-    setValue("items", updated)
-  }
+  useEffect(() => {
+    if (images.length > 0) {
+      const updatedImages = [...item.images, ...images];
+      setValue(`items.${index}.images`, updatedImages);
+    }
+  }, [images])
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) uploadImages(index ,Array.from(files));
+  };
 
   return (
     <div className="space-y-3">
@@ -41,7 +45,7 @@ export const ImageForm = ({
                 className="group relative aspect-square overflow-hidden rounded-lg border border-border"
               >
                 <img
-                  src="./default.jpg"
+                  src={_image || "./default.jpg"}
                   alt="Default"
                   className="h-full w-full object-cover"
                 />
@@ -62,22 +66,35 @@ export const ImageForm = ({
           <FormItem>
             <FormLabel>Subir Imágenes</FormLabel>
             <FormControl>
-              <input
-                type="file"
-                id={`images-${index}`}
-                multiple
-                accept="image/*"
-                onChange={(e) => handleImageUpload(index, e)}
-                className="hidden"
-              />
-              <label htmlFor={`images-${index}`}>
-                <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/50 px-4 py-8 transition-colors hover:bg-muted">
-                  <Upload className="h-5 w-5 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    {item.images.length > 0 ? "Agregar más imágenes" : "Seleccionar imágenes"}
-                  </span>
-                </div>
-              </label>
+              <div>
+                <input
+                  type="file"
+                  id={`images-${index}`}
+                  multiple
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  disabled={loading}
+                />
+                {
+                  loading ? (
+                    <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-muted/50 px-4 py-8">
+                      <span className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Spinner/> Cargando
+                      </span>
+                    </div>
+                  ) : (
+                    <label htmlFor={`images-${index}`}>
+                      <div className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/50 px-4 py-8 transition-colors hover:bg-muted">
+                        <Upload className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                          {item.images.length > 0 ? "Agregar más imágenes" : "Seleccionar imágenes"}
+                        </span>
+                      </div>
+                    </label>
+                  )
+                }
+              </div>
             </FormControl>
             <FormMessage />
           </FormItem>

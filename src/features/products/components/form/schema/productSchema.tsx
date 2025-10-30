@@ -25,18 +25,9 @@ const variationSchema = z.object({
   })
 })
 
-const imageSchema = z.object({
-  file: z.instanceof(File, {
-    message: "Debe ser un archivo válido"
-  }).refine((file) => file.size <= 5 * 1024 * 1024, {
-    message: "La imagen debe pesar menos de 5MB"
-  }).refine((file) => ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type), {
-    message: "Solo se permiten imágenes JPG, PNG o WebP"
-  }),
-  preview: z.string().url({
-    message: "La URL de previsualización debe ser válida"
-  })
-})
+const imageSchema = z.string().url({
+  message: "La URL de la imagen debe ser válida"
+});
 
 const productItemSchema = z.object({
   color_id: z.string().min(1, {
@@ -60,11 +51,7 @@ const productItemSchema = z.object({
   variations: z.array(variationSchema).min(1, {
     message: "Debes agregar al menos una talla"
   })
-}).refine((data) => Number(data.sale_price) <= Number(data.original_price), {
-  message: "El precio de venta no puede ser mayor al precio original",
-  path: ["sale_price"]
 })
-
 // Esquema principal del producto
 const productFormSchema = z.object({
   product_category_id: z.string().min(1, {

@@ -25,7 +25,6 @@ export const useSizeStore = create<SizeStore>((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await SizeService.getAllSizes();
-      console.log(response.data);
       set({ sizes: response.data, status: 'success' });
     } catch (error: unknown) {
       set({ status: 'error' });
