@@ -11,7 +11,7 @@ import { productFormSchema, type ProductFormData } from "./schema/productSchema"
 import { ModelInfoForm } from "./components/modelInfoForm"
 import { AttributesForm } from "./components/attributesForm"
 import { VariantForm } from "@/features/products/components/form/components/variantForm"
-import { ExtraInfoForm } from "@/features/products/components/form/components/extraInfoForm"
+// import { ExtraInfoForm } from "@/features/products/components/form/components/extraInfoForm"
 import { useProductStore } from "@/features/products/store/productStore"
 import { Spinner } from "@/components/ui/spinner"
 export const FormProduct = () => {
@@ -74,7 +74,7 @@ export const FormProduct = () => {
           >
             <GeneralDataForm />
             <ModelInfoForm />
-            <ExtraInfoForm />
+            {/* <ExtraInfoForm /> */}
             <AttributesForm />
             <VariantForm />
             <Button type="submit" className="w-full sm:w-auto" disabled={isLoading}>
