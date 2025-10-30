@@ -22,7 +22,6 @@ export const  UserButton = () => {
 
   if (!user) return null
   return (
-
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
