@@ -1,5 +1,5 @@
 [build]
-  command = "bun run clean && bun run build"
+  command = "bun run build"
 
 
 [[redirects]]
