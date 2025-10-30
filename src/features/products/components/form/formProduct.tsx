@@ -10,9 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { productFormSchema, type ProductFormData } from "./schema/productSchema"
 import { ModelInfoForm } from "./components/modelInfoForm"
 import { AttributesForm } from "./components/attributesForm"
-import { VariantForm } from "./components/variantForm"
-import { ExtraInfoForm } from "./components/extraInfoForm"
-import { useProductStore } from "../../store/productStore"
+import { VariantForm } from "@/features/products/components/form/components/variantForm"
+import { ExtraInfoForm } from "@/features/products/components/form/components/extraInfoForm"
+import { useProductStore } from "@/features/products/store/productStore"
 import { Spinner } from "@/components/ui/spinner"
 export const FormProduct = () => {
   const selectedProduct = false
