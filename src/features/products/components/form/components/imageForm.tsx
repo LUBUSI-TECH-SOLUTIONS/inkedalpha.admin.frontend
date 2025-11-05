@@ -6,7 +6,7 @@ import { Upload, X } from "lucide-react"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useUploadImageStore } from "@/features/products/store/imageStore"
 import { Spinner } from "@/components/ui/spinner"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 
 interface ImageFormProps {
   index: number
@@ -17,21 +17,37 @@ export const ImageForm = ({
   item, index
 }: ImageFormProps) => {
   const { control, setValue } = useFormContext<ProductFormData>()
-  const { uploadImages, imagesByIndex, loading } = useUploadImageStore()
+  const { uploadImages, imagesByIndex, loading, reset } = useUploadImageStore()
 
   const images = imagesByIndex[index] || [];
+  const processedImagesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (images.length > 0) {
-      const updatedImages = [...item.images, ...images];
-      setValue(`items.${index}.images`, updatedImages);
+      // Filtrar solo las imágenes nuevas que no están en el form ni se han procesado
+      const newImages = images.filter(
+        (image) => !item.images.includes(image) && !processedImagesRef.current.has(image)
+      );
+
+      if (newImages.length > 0) {
+        const updatedImages = [...item.images, ...newImages];
+        setValue(`items.${index}.images`, updatedImages);
+        
+        // Marcar las imágenes como procesadas
+        newImages.forEach((image) => processedImagesRef.current.add(image));
+        
+        // Limpiar el store después de agregar las imágenes
+        reset(index);
+      }
     }
-  }, [images])
+  }, [images, item.images, index, setValue, reset])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) uploadImages(index ,Array.from(files));
   };
+
+  console.log("images: ", item.images)
 
   return (
     <div className="space-y-3">
@@ -51,7 +67,9 @@ export const ImageForm = ({
                 />
                 <Button
                   type="button"
-                  className="absolute right-1 top-1 rounded-full bg-background/80 p-1 opacity-0 transition-opacity hover:bg-background group-hover:opacity-100"
+                  className="absolute right-1 top-1"
+                  variant="ghost"
+                  size="icon"
                 >
                   <X className="h-4 w-4" />
                 </Button>

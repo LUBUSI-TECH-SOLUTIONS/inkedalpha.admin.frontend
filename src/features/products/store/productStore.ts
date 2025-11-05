@@ -21,7 +21,11 @@ export const useProductStore = create<ProductState>((set) => ({
   fetchProducts: async () => {
     set({ isLoading: true });
     try {
-      const response = await ProductService.getAllProducts();
+      const response = await ProductService.getAllProducts({
+        lang: "es",
+        product: undefined,
+        include_details: false,
+      });
       set({ products: response.data });
     } catch (error: unknown) {
       throw error;
