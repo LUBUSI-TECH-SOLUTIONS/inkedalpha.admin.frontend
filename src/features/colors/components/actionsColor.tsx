@@ -21,7 +21,7 @@ export const CellActionColor = ({
 
   const [open, setOpen] = useState(false)
   const onDelete = async () => {
-    await deleteColor(row.original.color_id)
+    await deleteColor(row.original.color_id || "")
   }
 
   const handleUpdate = () => {

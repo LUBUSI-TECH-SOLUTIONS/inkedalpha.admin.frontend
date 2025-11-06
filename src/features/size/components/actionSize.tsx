@@ -20,7 +20,7 @@ export const CellActionSize = ({
 
   const [open, setOpen] = useState(false)
   const onDelete = async () => {
-    await deleteSize(row.original.size_id)
+    deleteSize(row.original.size_id || "")
   }
 
   const handleUpdate = () => {

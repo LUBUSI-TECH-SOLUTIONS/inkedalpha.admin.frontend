@@ -18,9 +18,6 @@ const formSchema = z.object({
   }).max(100, {
     message: "El nombre del tamaño debe tener máximo 100 caracteres"
   }),
-  size_value: z.string().max(100, {
-    message: "El valor del tamaño debe tener máximo 100 caracteres"
-  }).optional(),
   sort_order: z.number().min(1, {
     message: "El orden de clasificación debe ser al menos 1"
   }).max(1000, {
@@ -48,11 +45,9 @@ export const FormSize = () => {
     defaultValues: selectedSize
       ? {
         ...selectedSize,
-        size_value: selectedSize.size_value ?? '',
       }
       : {
         size_name: '',
-        size_value: '',
         sort_order: 1
       }
   })
@@ -125,20 +120,6 @@ export const FormSize = () => {
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
                     <Input placeholder="Extra small..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="size_value"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Valor</FormLabel>
-                  <FormControl>
-                    <Input placeholder="xs..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
