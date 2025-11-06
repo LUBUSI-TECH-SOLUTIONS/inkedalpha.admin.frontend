@@ -62,5 +62,25 @@ export const SizeService = {
       toast.error(errorMessage);
       throw new Error(errorMessage);
     }
+  },
+
+  deleteSize: async (size_id: string):
+    Promise<AxiosResponse<{ message: string }>> => {
+    try {
+      const response: AxiosResponse<{ message: string }>
+        = await apiClient.delete<{ message: string }>(`v1/delete-size-option/${size_id}`);
+      toast.success("Talla eliminado exitosamente.");
+      return response;
+    } catch (error: unknown) {
+      let errorMessage = "Error al eliminar el Talla.";
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
   }
 }

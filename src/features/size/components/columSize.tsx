@@ -14,15 +14,6 @@ export const getColumnsSize = (): ColumnDef<SizeType>[] => {
         </div>
     },
     {
-      id: "size_value",
-      accessorFn: (row) => row.size_value,
-      header: "Valor",
-      cell: ({ row }) =>
-        <div className="text-left max-w-[100px] truncate">
-          {row.original.size_value}
-        </div>
-    },
-    {
       id: "sort_order",
       accessorFn: (row) => row.sort_order,
       header: "Orden",
