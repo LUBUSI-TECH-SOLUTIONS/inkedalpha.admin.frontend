@@ -12,7 +12,7 @@ interface CategoryStore {
   createCategory: (categoryData: CategoryType) => Promise<void>;
   updateCategory: (categoryData: CategoryType) => Promise<void>;
   deleteCategory: (categoryId: string) => Promise<void>;
-  // toggleCategoryStatus: (categoryId: string) => Promise<void>;
+
   selectCategory: (category: CategoryType | null) => void;
 }
 

@@ -12,6 +12,7 @@ interface ColorStore {
   createColor: (colorData: ColorType) => Promise<void>;
   updateColor: (colorData: ColorType) => Promise<void>;
   selectColor: (color: ColorType | null) => void;
+  deleteColor: (colorId: string) => void;
   reset: () => void;
 }
 
@@ -26,10 +27,10 @@ export const useColorStore = create<ColorStore>((set, get) => ({
     try {
       const response = await ColorService.getAllColors();
       set({ colors: response.data, status: 'success' });
-    }catch (error: unknown) {
+    } catch (error: unknown) {
       set({ status: 'error' });
       throw error;
-    }finally{
+    } finally {
       set({ isLoading: false });
     }
   },
@@ -39,10 +40,10 @@ export const useColorStore = create<ColorStore>((set, get) => ({
       const response = await ColorService.createColor(colorData);
       set((state) => ({ colors: [...state.colors, response.data], status: 'success' }));
       get().reset();
-    }catch (error: unknown) {
+    } catch (error: unknown) {
       set({ status: 'error' });
       throw error;
-    }finally{
+    } finally {
       set({ isLoading: false });
     }
   },
@@ -57,11 +58,25 @@ export const useColorStore = create<ColorStore>((set, get) => ({
         status: 'success'
       }));
       get().reset();
-    }catch (error: unknown) {
+    } catch (error: unknown) {
       set({ status: 'error' });
       throw error;
-    }finally{
+    } finally {
       set({ isLoading: false });
+    }
+  },
+
+  deleteColor: async (colorId) => {
+    set({ isLoading: true })
+    try {
+      await ColorService.deleteColor(colorId)
+      set((state) => ({
+        colors: state.colors.filter((color) => color.color_id !== colorId)
+      }));
+    } catch (error: unknown) {
+      throw error
+    } finally {
+      set({ isLoading: false })
     }
   },
   selectColor: (color) => set({ selectedColor: color }),

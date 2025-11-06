@@ -12,6 +12,7 @@ interface SizeStore {
   createSize: (sizeData: SizeType) => Promise<void>;
   updateSize: (sizeData: SizeType) => Promise<void>;
   selectSize: (size: SizeType | null) => void;
+  deleteSize: (sizeId: string) => void;
   reset: () => void;
 }
 
@@ -57,6 +58,22 @@ export const useSizeStore = create<SizeStore>((set, get) => ({
           size.size_id === response.data.size_id ? response.data : size
         ),
         status: 'success'
+      }));
+      get().reset();
+    } catch (error: unknown) {
+      set({ status: 'error' });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  deleteSize: async (sizeId) => {
+    set({ isLoading: true });
+    try {
+      await SizeService.deleteSize(sizeId);
+      set((state) => ({
+        sizes: state.sizes.filter((size) => size.size_id !== sizeId)
       }));
       get().reset();
     } catch (error: unknown) {
