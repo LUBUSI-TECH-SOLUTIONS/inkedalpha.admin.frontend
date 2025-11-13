@@ -42,5 +42,8 @@ export interface ProductVariation {
 }
 
 export interface ProductCollection {
-  additionalProp1: Record<string, unknown>;
+  collection_description?: string;
+  collection_id?: string;
+  collection_image?: string;
+  collection_name: string
 }

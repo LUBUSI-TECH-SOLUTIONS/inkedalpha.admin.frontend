@@ -5,15 +5,14 @@ import { Plus, X } from "lucide-react"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useColorStore } from "@/features/colors/store/colorStore"
-import { useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useSizeStore } from "@/features/size/store/sizeStore"
 import { ImageForm } from "./imageForm"
 
 export const VariantForm = () => {
-  const { colors, fetchColors, isLoading: isColorLoading } = useColorStore()
-  const { sizes, fetchSizes, isLoading: isSizeLoading } = useSizeStore()
+  const { colors, isLoading: isColorLoading } = useColorStore()
+  const { sizes, isLoading: isSizeLoading } = useSizeStore()
   const { control, watch, setValue } = useFormContext<ProductFormData>()
   const items = watch("items") || []
 
@@ -52,11 +51,6 @@ export const VariantForm = () => {
     const newItems = items.filter((_, i) => i !== index)
     setValue("items", newItems)
   }
-
-  useEffect(() => {
-    fetchColors()
-    fetchSizes()
-  }, [])
 
   return (
     <div className="space-y-4">

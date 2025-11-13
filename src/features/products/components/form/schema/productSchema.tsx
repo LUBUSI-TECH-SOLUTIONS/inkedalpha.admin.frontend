@@ -25,9 +25,14 @@ const variationSchema = z.object({
   })
 })
 
-const imageSchema = z.string().url({
-  message: "La URL de la imagen debe ser válida"
-});
+const imageSchema = z.object({
+  image_filename: z.string().min(1, {
+    message: "La imagen es necesaria"
+  }),
+  product_image_id: z.string().min(1, {
+    message: "La imagen es necesaria"
+  }),
+})
 
 const productItemSchema = z.object({
   color_id: z.string().min(1, {

@@ -4,23 +4,48 @@ import { toast } from "sonner";
 import axios, { AxiosHeaders } from "axios";
 import apiClient from "@/app/apiClient";
 
+type ProductServiceParams = {
+  product_id?: string;
+  collection_id?: string;
+  product_category_id?: string;
+  include_details?: boolean;
+  single?: boolean;
+}
+
 export const ProductService = {
-  getAllProducts: async (params: {
-    lang: string;
-    product?: ProductResponse;
-    include_details?: boolean;
-  }): Promise<AxiosResponse<ProductResponse[]>> => {
+  getAllProducts: async (params: ProductServiceParams): 
+    Promise<AxiosResponse< ProductResponse | ProductResponse[]>> => {
     try {
-      const response: AxiosResponse<ProductResponse[]> = await apiClient.get<
-        ProductResponse[]
-      >("v1/product", {
+      const response: AxiosResponse<ProductResponse[]> = await apiClient.get("v1/product", {
         params: {
-          lang: params.lang,
-          product_id: params.product?.product_id,
-          include_details: params.include_details ?? false,
+         product_id: params.product_id,
+         collection_id: params.collection_id,
+         product_category_id: params.product_category_id,
+         include_details: params.include_details ?? false,
         },
         headers: new AxiosHeaders(),
       });
+
+      if(params.single === true && Array.isArray(response.data)) {
+        const singleResponse : AxiosResponse<ProductResponse> = {
+          ...response,
+          data: response.data[0],
+        }
+        return singleResponse;
+      }
+
+      if( params.single === true && !Array.isArray(response.data)){
+        return response as unknown as AxiosResponse<ProductResponse>;
+      }
+
+      if(params.single !== true){
+        const arrayResponse: AxiosResponse<ProductResponse[]> = {
+          ...response,
+          data: Array.isArray(response.data) ? response.data : [response.data],
+        };
+        return arrayResponse;
+      }
+      
       return response;
     } catch (error: unknown) {
       let errorMessage = "Error al obtener los productos.";

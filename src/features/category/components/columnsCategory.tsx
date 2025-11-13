@@ -25,17 +25,6 @@ export const getColumnsCollection = (): ColumnDef<CategoryType>[] => {
 
     },
     {
-      id: "parent_category_name",
-      accessorFn: (row) => row.parent_category_name,
-      header: "Fecha de inicio",
-      cell: ({ row }) =>
-        row.original.parent_category_name ? (
-          row.original.parent_category_name
-        ) : (
-          "N/A"
-        )
-    },
-    {
       id: "actions",
       cell: ({ row }) => <CellActionCotegory row={row} />,
     }

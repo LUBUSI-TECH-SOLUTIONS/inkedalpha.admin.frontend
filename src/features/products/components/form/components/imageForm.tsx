@@ -26,11 +26,19 @@ export const ImageForm = ({
     if (images.length > 0) {
       // Filtrar solo las imágenes nuevas que no están en el form ni se han procesado
       const newImages = images.filter(
-        (image) => !item.images.includes(image) && !processedImagesRef.current.has(image)
+        (image) =>
+          !item.images.some((img) => img.image_filename === image) &&
+          !processedImagesRef.current.has(image)
       );
 
       if (newImages.length > 0) {
-        const updatedImages = [...item.images, ...newImages];
+        const updatedImages = [
+          ...item.images,
+          ...newImages.map((image) => ({
+            image_filename: image,
+            product_image_id: "", // O asignar un valor adecuado si se tiene
+          })),
+        ];
         setValue(`items.${index}.images`, updatedImages);
         
         // Marcar las imágenes como procesadas
@@ -47,8 +55,6 @@ export const ImageForm = ({
     if (files) uploadImages(index ,Array.from(files));
   };
 
-  console.log("images: ", item.images)
-
   return (
     <div className="space-y-3">
       <Label className="text-lg font-medium text-foreground">Imágenes del Producto</Label>
@@ -61,7 +67,7 @@ export const ImageForm = ({
                 className="group relative aspect-square overflow-hidden rounded-lg border border-border"
               >
                 <img
-                  src={_image || "./default.jpg"}
+                  src={_image.image_filename || "./default.jpg" }
                   alt="Default"
                   className="h-full w-full object-cover"
                 />

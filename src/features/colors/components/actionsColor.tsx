@@ -17,7 +17,7 @@ export const CellActionColor = ({
 }: CellActionColorProps) => {
 
   const { selectColor, isLoading, deleteColor } = useColorStore()
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
   const [open, setOpen] = useState(false)
   const onDelete = async () => {

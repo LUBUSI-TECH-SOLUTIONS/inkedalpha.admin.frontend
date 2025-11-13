@@ -2,7 +2,6 @@
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCategory } from "@/features/category/store/useCategory"
-import { useEffect } from "react"
 import { useCollection } from "@/features/collections/store/useCollection"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -11,13 +10,9 @@ import type { ProductFormData } from "../schema/productSchema"
 
 export const GeneralDataForm = () => {
   const { control } = useFormContext<ProductFormData>()
-  const { categories, fetchCategories, isLoading: isCategoriesLoading } = useCategory()
-  const { collections, fetchCollections, isLoading: isCollectionsLoading } = useCollection()
+  const { categories, isLoading: isCategoriesLoading } = useCategory()
+  const { collections, isLoading: isCollectionsLoading } = useCollection()
 
-  useEffect(() => {
-    fetchCategories()
-    fetchCollections()
-  }, [])
   return (
     <div className="space-y-6">
       <div className="space-y-4">

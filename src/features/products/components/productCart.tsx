@@ -10,6 +10,8 @@ import {
 import { formatCurrency } from "@/lib/utils";
 import { AlertModal } from "@/components/mdoal/alertModal";
 import { useState } from "react";
+import { useProductStore } from "../store/productStore";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCartProps {
   product: ProductResponse;
@@ -20,12 +22,17 @@ export const ProductCart = ({ product }: ProductCartProps) => {
   const image = firstItem?.images?.[0]?.image_filename || "./default.jpg";
   const colorName = firstItem?.color_name || "Sin color";
   const [open, setOpen] = useState(false)
-  const onDelete = () =>{
+  const navigate = useNavigate();
+
+  const onDelete = () => {
     console.log("Eliminado")
   }
+  const { isLoading, fetchSingleProduct } = useProductStore()
 
-  const isLoading = false
-
+  const handleSelectProduct = () => {
+    fetchSingleProduct(product)
+    navigate(`/products/${product.product_id}`);
+  }
 
   return (
     <>
@@ -53,11 +60,13 @@ export const ProductCart = ({ product }: ProductCartProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={handleSelectProduct}
+              >
                 <Edit className="h-4 w-4" />
                 Editar
               </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => setOpen(true)}
                 variant="destructive">
                 <Trash className="h-4 w-4" />
