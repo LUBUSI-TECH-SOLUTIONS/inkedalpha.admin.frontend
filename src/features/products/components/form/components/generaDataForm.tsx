@@ -2,22 +2,19 @@
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCategory } from "@/features/category/store/useCategory"
-import { useEffect } from "react"
 import { useCollection } from "@/features/collections/store/useCollection"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useFormContext } from "react-hook-form"
 import type { ProductFormData } from "../schema/productSchema"
+import { useProductStore } from "@/features/products/store/productStore"
 
 export const GeneralDataForm = () => {
   const { control } = useFormContext<ProductFormData>()
-  const { categories, fetchCategories, isLoading: isCategoriesLoading } = useCategory()
-  const { collections, fetchCollections, isLoading: isCollectionsLoading } = useCollection()
+  const { categories, isLoading: isCategoriesLoading } = useCategory()
+  const { collections, isLoading: isCollectionsLoading } = useCollection()
+  const { isLoading: isProductLoading } = useProductStore()
 
-  useEffect(() => {
-    fetchCategories()
-    fetchCollections()
-  }, [])
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -32,7 +29,7 @@ export const GeneralDataForm = () => {
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger className="w-full" disabled={isCollectionsLoading}>
+                  <SelectTrigger className="w-full" disabled={isCollectionsLoading || isProductLoading}>
                     <SelectValue placeholder="Selecciona una colección" />
                   </SelectTrigger>
                 </FormControl>
@@ -62,7 +59,7 @@ export const GeneralDataForm = () => {
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger className="w-full" disabled={isCategoriesLoading}>
+                  <SelectTrigger className="w-full" disabled={isCategoriesLoading || isProductLoading}>
                     <SelectValue placeholder="Selecciona una categoría" />
                   </SelectTrigger>
                 </FormControl>
@@ -88,7 +85,7 @@ export const GeneralDataForm = () => {
             <FormItem>
               <FormLabel>Nombre del producto</FormLabel>
               <FormControl>
-                <Input placeholder="Nombre del producto" {...field} />
+                <Input placeholder="Nombre del producto" {...field} disabled={isProductLoading} />
               </FormControl>
               <FormDescription className="text-xs">
                 El nombre del producto debe ser único y descriptivo.
@@ -107,6 +104,7 @@ export const GeneralDataForm = () => {
                 <Textarea
                   placeholder="Descripción del producto"
                   {...field}
+                  disabled={isProductLoading}
                 />
               </FormControl>
               <FormDescription className="text-xs">

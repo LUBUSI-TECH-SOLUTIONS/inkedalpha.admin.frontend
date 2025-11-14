@@ -2,9 +2,11 @@ import { useFormContext } from "react-hook-form"
 import type { ProductFormData } from "../schema/productSchema"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useProductStore } from "@/features/products/store/productStore"
 
 export const ModelInfoForm = () => {
   const { control } = useFormContext<ProductFormData>()
+  const { isLoading: isProductLoading } = useProductStore()
 
   return (
     <div className="space-y-6">
@@ -17,7 +19,7 @@ export const ModelInfoForm = () => {
             <FormItem>
               <FormLabel>Altura del Modelo (cm)</FormLabel>
               <FormControl>
-                <Input placeholder="ej. 175cm" {...field}/>
+                <Input placeholder="ej. 175cm" {...field} disabled={isProductLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -30,7 +32,7 @@ export const ModelInfoForm = () => {
             <FormItem>
               <FormLabel>Talla del Modelo</FormLabel>
               <FormControl>
-                <Input placeholder="ej. M" {...field}/>
+                <Input placeholder="ej. M" {...field} disabled={isProductLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>

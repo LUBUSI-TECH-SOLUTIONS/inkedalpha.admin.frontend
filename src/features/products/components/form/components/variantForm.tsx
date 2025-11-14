@@ -5,15 +5,16 @@ import { Plus, X } from "lucide-react"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useColorStore } from "@/features/colors/store/colorStore"
-import { useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useSizeStore } from "@/features/size/store/sizeStore"
 import { ImageForm } from "./imageForm"
+import { useProductStore } from "@/features/products/store/productStore"
 
 export const VariantForm = () => {
-  const { colors, fetchColors, isLoading: isColorLoading } = useColorStore()
-  const { sizes, fetchSizes, isLoading: isSizeLoading } = useSizeStore()
+  const { colors, isLoading: isColorLoading } = useColorStore()
+  const { sizes, isLoading: isSizeLoading } = useSizeStore()
+  const { isLoading: isProductLoading } = useProductStore()
   const { control, watch, setValue } = useFormContext<ProductFormData>()
   const items = watch("items") || []
 
@@ -53,10 +54,15 @@ export const VariantForm = () => {
     setValue("items", newItems)
   }
 
-  useEffect(() => {
-    fetchColors()
-    fetchSizes()
-  }, [])
+  const formatNumber = (value: string) => {
+    // Eliminar todo lo que no sea dígito
+    const cleanValue = value.replace(/\D/g, "");
+
+    if (!cleanValue) return "";
+
+    // Formatear con puntos
+    return new Intl.NumberFormat("es-CO").format(Number(cleanValue));
+  };
 
   return (
     <div className="space-y-4">
@@ -70,6 +76,7 @@ export const VariantForm = () => {
               variant="ghost"
               size="icon"
               onClick={() => removeItem(index)}
+              disabled={isProductLoading}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -88,7 +95,7 @@ export const VariantForm = () => {
                     <FormControl>
                       <SelectTrigger
                         className="w-full"
-                        disabled={isColorLoading}
+                        disabled={isColorLoading || isProductLoading}
                       >
                         <SelectValue placeholder="Selecciona un color" />
                       </SelectTrigger>
@@ -126,6 +133,11 @@ export const VariantForm = () => {
                         type="number"
                         placeholder="0.00"
                         {...field}
+                        disabled={isProductLoading}
+                        onChange={(e) => {
+                          const formatted = formatNumber(e.target.value);
+                          field.onChange(formatted);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -143,6 +155,11 @@ export const VariantForm = () => {
                         type="number"
                         placeholder="0.00"
                         {...field}
+                        onChange={(e) => {
+                          const formatted = formatNumber(e.target.value);
+                          field.onChange(formatted);
+                        }}
+                        disabled={isProductLoading}
                       />
                     </FormControl>
                     <FormMessage />
@@ -163,6 +180,7 @@ export const VariantForm = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => addVariation(index)}
+                  disabled={isProductLoading}
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   Agregar Talla
@@ -185,7 +203,7 @@ export const VariantForm = () => {
                               defaultValue={field.value}
                             >
                               <FormControl>
-                                <SelectTrigger className="w-full" disabled={isSizeLoading}>
+                                <SelectTrigger className="w-full" disabled={isSizeLoading || isProductLoading}>
                                   <SelectValue placeholder="Selecciona una talla" />
                                 </SelectTrigger>
                               </FormControl>
@@ -211,6 +229,7 @@ export const VariantForm = () => {
                                 type="number"
                                 placeholder="0"
                                 {...field}
+                                disabled={isProductLoading}
                               />
                             </FormControl>
                             <FormMessage />
@@ -222,6 +241,7 @@ export const VariantForm = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => removeVariation(index, varIndex)}
+                        disabled={isProductLoading}
                       >
                         <X className="h-4 w-4" />
                       </Button>
@@ -237,6 +257,7 @@ export const VariantForm = () => {
         variant="outline"
         size="sm"
         onClick={() => addItem()}
+        disabled={isProductLoading}
       >
         <Plus className="mr-2 h-4 w-4" />
         Agregar Variante

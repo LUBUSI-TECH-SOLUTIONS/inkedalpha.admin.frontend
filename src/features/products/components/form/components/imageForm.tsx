@@ -7,6 +7,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { useUploadImageStore } from "@/features/products/store/imageStore"
 import { Spinner } from "@/components/ui/spinner"
 import { useEffect, useRef } from "react"
+import { useProductStore } from "@/features/products/store/productStore"
 
 interface ImageFormProps {
   index: number
@@ -16,8 +17,9 @@ interface ImageFormProps {
 export const ImageForm = ({
   item, index
 }: ImageFormProps) => {
-  const { control, setValue } = useFormContext<ProductFormData>()
+  const { control, setValue} = useFormContext<ProductFormData>()
   const { uploadImages, imagesByIndex, loading, reset } = useUploadImageStore()
+  const { isLoading: isProductLoading } = useProductStore()
 
   const images = imagesByIndex[index] || [];
   const processedImagesRef = useRef<Set<string>>(new Set());
@@ -47,8 +49,6 @@ export const ImageForm = ({
     if (files) uploadImages(index ,Array.from(files));
   };
 
-  console.log("images: ", item.images)
-
   return (
     <div className="space-y-3">
       <Label className="text-lg font-medium text-foreground">Imágenes del Producto</Label>
@@ -61,7 +61,7 @@ export const ImageForm = ({
                 className="group relative aspect-square overflow-hidden rounded-lg border border-border"
               >
                 <img
-                  src={_image || "./default.jpg"}
+                  src={_image || "./default.jpg" }
                   alt="Default"
                   className="h-full w-full object-cover"
                 />
@@ -70,6 +70,7 @@ export const ImageForm = ({
                   className="absolute right-1 top-1"
                   variant="ghost"
                   size="icon"
+                  disabled={isProductLoading}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -92,7 +93,7 @@ export const ImageForm = ({
                   accept="image/*"
                   onChange={handleFileChange}
                   className="hidden"
-                  disabled={loading}
+                  disabled={loading || isProductLoading}
                 />
                 {
                   loading ? (
