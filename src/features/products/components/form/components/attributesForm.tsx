@@ -4,9 +4,13 @@ import type { ProductFormData } from "../schema/productSchema"
 import { useFormContext } from "react-hook-form"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useProductStore } from "@/features/products/store/productStore"
 
 export const AttributesForm = () => {
   const { control, watch, setValue } = useFormContext<ProductFormData>()
+  const { isLoading: isProductLoading } = useProductStore()
+
+
   const attributes = watch("attributes") || []
   const addAttribute = () => {
     const newAttributes = [...attributes, { attribute_name: "", attribute_value: "" }]
@@ -25,6 +29,7 @@ export const AttributesForm = () => {
             type="button"
             variant="outline"
             size="sm"
+            disabled={isProductLoading}
             onClick={addAttribute}>
             <Plus className="mr-2 h-4 w-4" />
             Agregar Atributo
@@ -45,7 +50,7 @@ export const AttributesForm = () => {
                   <FormItem className="flex-1">
                     <FormLabel>Nombre del Atributo</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nombre del atributo" {...field} />
+                      <Input placeholder="Nombre del atributo" {...field} disabled={isProductLoading}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -58,7 +63,7 @@ export const AttributesForm = () => {
                   <FormItem className="flex-1">
                     <FormLabel>Valor del Atributo</FormLabel>
                     <FormControl>
-                      <Input placeholder="Valor del atributo" {...field} />
+                      <Input placeholder="Valor del atributo" {...field} disabled={isProductLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

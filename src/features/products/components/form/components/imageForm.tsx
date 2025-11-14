@@ -7,6 +7,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { useUploadImageStore } from "@/features/products/store/imageStore"
 import { Spinner } from "@/components/ui/spinner"
 import { useEffect, useRef } from "react"
+import { useProductStore } from "@/features/products/store/productStore"
 
 interface ImageFormProps {
   index: number
@@ -16,8 +17,9 @@ interface ImageFormProps {
 export const ImageForm = ({
   item, index
 }: ImageFormProps) => {
-  const { control, setValue } = useFormContext<ProductFormData>()
+  const { control, setValue} = useFormContext<ProductFormData>()
   const { uploadImages, imagesByIndex, loading, reset } = useUploadImageStore()
+  const { isLoading: isProductLoading } = useProductStore()
 
   const images = imagesByIndex[index] || [];
   const processedImagesRef = useRef<Set<string>>(new Set());
@@ -26,19 +28,11 @@ export const ImageForm = ({
     if (images.length > 0) {
       // Filtrar solo las imágenes nuevas que no están en el form ni se han procesado
       const newImages = images.filter(
-        (image) =>
-          !item.images.some((img) => img.image_filename === image) &&
-          !processedImagesRef.current.has(image)
+        (image) => !item.images.includes(image) && !processedImagesRef.current.has(image)
       );
 
       if (newImages.length > 0) {
-        const updatedImages = [
-          ...item.images,
-          ...newImages.map((image) => ({
-            image_filename: image,
-            product_image_id: "", // O asignar un valor adecuado si se tiene
-          })),
-        ];
+        const updatedImages = [...item.images, ...newImages];
         setValue(`items.${index}.images`, updatedImages);
         
         // Marcar las imágenes como procesadas
@@ -67,7 +61,7 @@ export const ImageForm = ({
                 className="group relative aspect-square overflow-hidden rounded-lg border border-border"
               >
                 <img
-                  src={_image.image_filename || "./default.jpg" }
+                  src={_image || "./default.jpg" }
                   alt="Default"
                   className="h-full w-full object-cover"
                 />
@@ -76,6 +70,7 @@ export const ImageForm = ({
                   className="absolute right-1 top-1"
                   variant="ghost"
                   size="icon"
+                  disabled={isProductLoading}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -98,7 +93,7 @@ export const ImageForm = ({
                   accept="image/*"
                   onChange={handleFileChange}
                   className="hidden"
-                  disabled={loading}
+                  disabled={loading || isProductLoading}
                 />
                 {
                   loading ? (

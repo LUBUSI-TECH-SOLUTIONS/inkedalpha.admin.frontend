@@ -45,6 +45,7 @@ export const FormProduct = () => {
   }, [id]);
 
   const onSubmit = async (data: any) => {
+    console.log("Submitting data:", data);
     try {
       await createProduct(data);
       form.reset();
@@ -52,8 +53,6 @@ export const FormProduct = () => {
       throw error;
     }
   };
-
-  if (isLoading) return <Spinner />;
 
   return (
     <section className="mx-auto max-w-4xl px-6 py-8">

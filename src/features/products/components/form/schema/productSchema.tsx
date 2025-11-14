@@ -25,13 +25,8 @@ const variationSchema = z.object({
   })
 })
 
-const imageSchema = z.object({
-  image_filename: z.string().min(1, {
-    message: "La imagen es necesaria"
-  }),
-  product_image_id: z.string().min(1, {
-    message: "La imagen es necesaria"
-  }),
+const imageSchema = z.string().min(1, {
+  message: "La imagen es necesaria"
 })
 
 const productItemSchema = z.object({
